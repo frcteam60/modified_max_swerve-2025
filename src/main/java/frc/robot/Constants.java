@@ -65,7 +65,21 @@ public final class Constants {
     public static final int kRearRightTurningCanId = 4;
 
     //public static final boolean kGyroReversed = false;
-    public static final boolean kGyroReversed = true;
+    public static final boolean kGyroReversed = false;
+
+
+    //Absolute Encoder Port
+    public static final int kFrontLeftEncoderNum = 3;
+    public static final int kRearLeftEncoderNum = 0;
+    public static final int kFrontRightEncoderNum = 2;
+    public static final int kRearRightEncoderNum = 1;
+
+    //Absolute Encoder offsets
+    //Our relative encoders output radians after we apply the conversion factor
+    public static final double kFrontLeftAbsOffset = Math.toRadians(0.009997 * 360);
+    public static final double kRearLeftAbsOffset = Math.toRadians(0.771441 * 360);
+    public static final double kFrontRightAbsOffset = Math.toRadians(0.110444 * 360);
+    public static final double kRearRightAbsOffset = Math.toRadians(0.238739 * 360);
   }
 
   public static final class ModuleConstants {

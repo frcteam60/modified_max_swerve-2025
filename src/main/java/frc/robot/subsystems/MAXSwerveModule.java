@@ -16,6 +16,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 import frc.robot.Configs;
 
@@ -25,6 +26,7 @@ public class MAXSwerveModule {
 
   private final RelativeEncoder m_drivingEncoder;
   private final RelativeEncoder m_turningEncoder;
+  private final DutyCycleEncoder m_absoluteEncoder;
   //TODO abs encoder
 
   private final SparkClosedLoopController m_drivingClosedLoopController;
@@ -40,7 +42,7 @@ public class MAXSwerveModule {
    * MAXSwerve Module built with NEOs, SPARKS MAX, and a Through Bore
    * Encoder.
    */
-  public MAXSwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
+  public MAXSwerveModule(int drivingCANId, int turningCANId, int encoderNumber, double chassisAngularOffset) {
     ID = drivingCANId;
     m_drivingSpark = new SparkMax(drivingCANId, MotorType.kBrushless);
     m_turningSpark = new SparkMax(turningCANId, MotorType.kBrushless);
@@ -48,6 +50,7 @@ public class MAXSwerveModule {
     m_drivingEncoder = m_drivingSpark.getEncoder();
     m_turningEncoder = m_turningSpark.getEncoder();
     //m_turningEncoder = m_turningSpark.getEncoder();
+    m_absoluteEncoder = new DutyCycleEncoder(encoderNumber);
 
     m_drivingClosedLoopController = m_drivingSpark.getClosedLoopController();
     m_turningClosedLoopController = m_turningSpark.getClosedLoopController();
@@ -65,6 +68,12 @@ public class MAXSwerveModule {
     m_drivingEncoder.setPosition(0);
   }
 
+  public void setEncoder(double offset){
+    //Sets the relative turning encoder by the absolute encoder
+    m_turningEncoder.setPosition(Math.toRadians(m_absoluteEncoder.get() * 360) - offset);
+    System.out.println(m_turningEncoder.getPosition());
+    
+  }
   /**
    * Returns the current state of the module.
    *
@@ -116,5 +125,12 @@ public class MAXSwerveModule {
   /** Zeroes all the SwerveModule encoders. */
   public void resetEncoders() {
     m_drivingEncoder.setPosition(0);
+  }
+
+  public double returnModuleAngle(){
+    return m_turningEncoder.getPosition();
+  }
+  public double returnAbsAngle(){
+    return m_absoluteEncoder.get();
   }
 }

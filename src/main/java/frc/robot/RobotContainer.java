@@ -73,6 +73,10 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
   }
+  //Method for displaying abs encoder values for finding offset
+  public void displayAbsoluteAngle(){
+    m_robotDrive.displayAbsValues();
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

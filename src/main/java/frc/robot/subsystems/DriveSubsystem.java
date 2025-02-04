@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,21 +29,25 @@ public class DriveSubsystem extends SubsystemBase {
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
       DriveConstants.kFrontLeftTurningCanId,
+      DriveConstants.kFrontLeftEncoderNum,
       DriveConstants.kFrontLeftChassisAngularOffset);
 
   private final MAXSwerveModule m_frontRight = new MAXSwerveModule(
       DriveConstants.kFrontRightDrivingCanId,
       DriveConstants.kFrontRightTurningCanId,
+      DriveConstants.kFrontRightEncoderNum,
       DriveConstants.kFrontRightChassisAngularOffset);
 
   private final MAXSwerveModule m_rearLeft = new MAXSwerveModule(
       DriveConstants.kRearLeftDrivingCanId,
       DriveConstants.kRearLeftTurningCanId,
+      DriveConstants.kRearLeftEncoderNum,
       DriveConstants.kBackLeftChassisAngularOffset);
 
   private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
       DriveConstants.kRearRightDrivingCanId,
       DriveConstants.kRearRightTurningCanId,
+      DriveConstants.kRearRightEncoderNum,
       DriveConstants.kBackRightChassisAngularOffset);
 
   // The gyro sensor
@@ -68,12 +73,20 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
+    setEncoder();
+
   }
 
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
     yaw = gyro.getYaw()*-1;
+    //Displays module angle in radians
+    SmartDashboard.putNumber("FL Encoder Relative", m_frontLeft.returnModuleAngle());
+    SmartDashboard.putNumber("BL Encoder Relative", m_rearLeft.returnModuleAngle());
+    SmartDashboard.putNumber("FR Encoder Relative", m_frontRight.returnModuleAngle());
+    SmartDashboard.putNumber("BR Encoder Relative", m_rearRight.returnModuleAngle());
+
     m_odometry.update(
         //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         Rotation2d.fromDegrees(yaw),
@@ -83,6 +96,14 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+  }
+
+  //Set turning encoders based on abs
+  public void setEncoder(){
+    m_frontLeft.setEncoder(DriveConstants.kFrontLeftAbsOffset);
+    m_rearLeft.setEncoder(DriveConstants.kRearLeftAbsOffset);
+    m_frontRight.setEncoder(DriveConstants.kFrontRightAbsOffset);
+    m_rearRight.setEncoder(DriveConstants.kRearRightAbsOffset);
   }
 
   /**
@@ -205,5 +226,13 @@ public class DriveSubsystem extends SubsystemBase {
   public double getTurnRate() {
     //return m_gyro.getRate(IMUAxis.kZ) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
     return yaw * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+
+  public void displayAbsValues(){
+    SmartDashboard.putNumber("FL Encoder abs", m_frontLeft.returnAbsAngle());
+    SmartDashboard.putNumber("BL Encoder abs", m_rearLeft.returnAbsAngle());
+    SmartDashboard.putNumber("FR Encoder abs", m_frontRight.returnAbsAngle());
+    SmartDashboard.putNumber("BR Encoder abs", m_rearRight.returnAbsAngle());
   }
 }
