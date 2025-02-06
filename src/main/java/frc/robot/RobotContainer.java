@@ -103,7 +103,7 @@ public class RobotContainer {
 
 
     // Test Trajectory
-    Trajectory tesTrajectory = TrajectoryGenerator.generateTrajectory(
+    Trajectory testTrajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(new Translation2d(0, 0), new Rotation2d(0)),
         List.of(new Translation2d(0.5, 0.5)), 
         new Pose2d(new Translation2d(1, 1), new Rotation2d(0)), 
@@ -138,7 +138,7 @@ public class RobotContainer {
         m_robotDrive);
  */
     SwerveControllerCommand mySwerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
+        testTrajectory,
         m_robotDrive::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
     

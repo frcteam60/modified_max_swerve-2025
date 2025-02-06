@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
+import com.pathplanner.lib.config.RobotConfig;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -104,6 +106,11 @@ public final class Constants {
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
+  }
+
+  public static final class PathPlannerConstants{
+    //public static final RobotConfig pathRobotConfig = RobotConfig;
+    //TODO
   }
 
   public static final class AutoConstants {
