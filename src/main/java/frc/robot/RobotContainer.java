@@ -64,6 +64,7 @@ public class RobotContainer {
                 true),
             m_robotDrive));
 
+    //TODO register commands also I think ? only if I use other commands?
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -141,18 +142,6 @@ public class RobotContainer {
         m_robotDrive::setModuleStates,
         m_robotDrive);
 
-    /* SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
-
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
- */
     SwerveControllerCommand mySwerveControllerCommand = new SwerveControllerCommand(
         testTrajectory,
         m_robotDrive::getPose, // Functional interface to feed supplier
