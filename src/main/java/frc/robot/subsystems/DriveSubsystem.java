@@ -14,12 +14,20 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+
+import java.lang.invoke.VolatileCallSite;
+import java.util.function.Consumer;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -28,6 +36,14 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 import com.studica.frc.jni.AHRSJNI;
+
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
+
+import static edu.wpi.first.units.Units.Volts;
+
+import java.util.function.Consumer;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -73,6 +89,59 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
       });
+
+  /* // SysId stuff
+  private final Config sysIdConfig = new Config();
+  private final Consumer<Voltage> c_drive;
+  private final Consumer<SysIdRoutineLog> c_log;
+  
+  //TODO fix this stuff
+  //private final Mechanism sysIdMechanism = new Mechanism(this::voltageDrive, this::logMotors, this);
+  private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
+    sysIdConfig, 
+    new SysIdRoutine.Mechanism(this::voltageDrive, this::logMotors, this)
+  );
+
+  // Create a new SysId routine for characterizing the drive.
+  private final SysIdRoutine m_sysIdRoutine =
+      new SysIdRoutine(
+          // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+          new SysIdRoutine.Config(),
+          new SysIdRoutine.Mechanism(
+              // Tell SysId how to plumb the driving voltage to the motors.
+              voltage -> {
+                m_frontLeft.voltageControl(voltage);
+                m_rearLeft.voltageControl(voltage);
+                m_frontRight.voltageControl(voltage);
+                m_rearRight.voltageControl(voltage);
+                //m_leftMotor.setVoltage(voltage);
+                //m_rightMotor.setVoltage(voltage); 
+              },
+              // Tell SysId how to record a frame of data for each motor on the mechanism being
+              // characterized.
+              log -> {
+                // Record a frame for the left motors.  Since these share an encoder, we consider
+                // the entire group to be one motor.
+                log.motor("front-left")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_leftMotor.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_leftEncoder.getDistance(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_leftEncoder.getRate(), MetersPerSecond));
+                // Record a frame for the right motors.  Since these share an encoder, we consider
+                // the entire group to be one motor.
+                log.motor("drive-right")
+                    .voltage(
+                        m_appliedVoltage.mut_replace(
+                            m_rightMotor.get() * RobotController.getBatteryVoltage(), Volts))
+                    .linearPosition(m_distance.mut_replace(m_rightEncoder.getDistance(), Meters))
+                    .linearVelocity(
+                        m_velocity.mut_replace(m_rightEncoder.getRate(), MetersPerSecond));
+              },
+              // Tell SysId to make generated commands require this subsystem, suffix test state in
+              // WPILog with this subsystem's name ("drive")
+              this)); */
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -137,6 +206,18 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+  }
+
+
+  public void logMotors(){
+    
+  }
+
+  public void voltageDrive(Voltage volts){
+    m_frontLeft.voltageControl(volts);
+    m_frontRight.voltageControl(volts);
+    m_rearLeft.voltageControl(volts);
+    m_rearRight.voltageControl(volts);
   }
 
   //Set turning encoders based on abs
