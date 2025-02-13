@@ -167,7 +167,7 @@ public class RobotContainer {
   }
 
   public Command getSecondAutoCommand(){
-    //TODO load this when code starts not when this called here
+    //-TO-DO- load this when code starts not when this called here //I think this should be fine because its like the coconuts last year
     //return new PathPlannerAuto("Test Auto");
     return autoChooser.getSelected();
   }

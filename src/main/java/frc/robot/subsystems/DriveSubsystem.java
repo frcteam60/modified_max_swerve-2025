@@ -149,6 +149,7 @@ public class DriveSubsystem extends SubsystemBase {
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
     setEncoder();
 
+    //AutoBuider Config for PathPlanner
     RobotConfig config;
     try{
       config = RobotConfig.fromGUISettings();
