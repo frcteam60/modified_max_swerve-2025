@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.VisionConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -51,6 +52,7 @@ public class Vision extends SubsystemBase {
   
   //
   PhotonCamera camera = new PhotonCamera("rpi-cam");
+  int timesThrough = 0;
 
   /** Creates a new DriveSubsystem. */
   public Vision() {
@@ -64,6 +66,38 @@ public class Vision extends SubsystemBase {
     
   }
 
+  public double targetYaw(){
+    // Read in relevant data from the Camera
+    boolean targetVisible = false;
+    double targetYaw = 0.0;
+    var results = camera.getAllUnreadResults();
+    timesThrough++;
+
+    if (!results.isEmpty()) {
+        // Camera processed a new frame since last
+        // Get the last one in the list.
+        var result = results.get(results.size() - 1);
+        if (result.hasTargets()) {
+            // At least one AprilTag was seen by the camera
+            for (var target : result.getTargets()) {
+                if (target.getFiducialId() == 8) {
+                    // Found Tag 8, record its information
+                    targetYaw = target.getYaw();
+                    targetVisible = true;
+                }
+            }
+        }
+    }
+    SmartDashboard.putBoolean("results.isEmpty", results.isEmpty());
+    //SmartDashboard.putArray("getTargets", result.getTargets);
+    SmartDashboard.putNumber("timesThrough", timesThrough);
+    SmartDashboard.putNumber("target's Yaw", targetYaw);
+    return targetYaw;
+    //-1.0 * targetYaw * VisionConstants.turningP * DriveConstants.kMaxAngularSpeed   
+
+  }
+
+  //public void return
 
 
 

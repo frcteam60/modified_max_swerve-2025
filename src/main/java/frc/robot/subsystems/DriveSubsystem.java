@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.VisionConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -335,6 +336,34 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+  }
+
+  public void lineUpDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative){
+    System.out.println(xSpeed);
+    System.out.println(ySpeed);
+    System.out.println(rot);
+    System.out.println(fieldRelative);
+    // Convert the commanded speeds into the correct units for the drivetrain
+    double rotDelivered = -1.0 * rot * VisionConstants.turningP * DriveConstants.kMaxAngularSpeed;
+    SmartDashboard.putNumber("vision rotDelivered", rotDelivered);
+
+    double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+
+    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+        fieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
+                //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)))
+                Rotation2d.fromDegrees(yaw))
+            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    System.out.println("zero"+ swerveModuleStates[0].toString());
+    System.out.println("one"+ swerveModuleStates[1].toString());
+    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_rearLeft.setDesiredState(swerveModuleStates[2]);
+    m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
   /**
