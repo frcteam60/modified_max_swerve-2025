@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 
+import java.lang.annotation.Target;
 import java.lang.invoke.VolatileCallSite;
 import java.util.function.Consumer;
 
@@ -43,6 +45,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
+
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -52,7 +56,10 @@ public class Vision extends SubsystemBase {
   
   //
   PhotonCamera camera = new PhotonCamera("rpi-cam");
-  int timesThrough = 0;
+  public double targetYaw = 0;
+  public double targetRange = 0;
+  public double targetArea = 0;
+  public boolean targetVisible = false;
 
   /** Creates a new DriveSubsystem. */
   public Vision() {
@@ -63,15 +70,8 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
-  }
-
-  public double targetYaw(){
     // Read in relevant data from the Camera
-    boolean targetVisible = false;
-    double targetYaw = 0.0;
     var results = camera.getAllUnreadResults();
-    timesThrough++;
 
     if (!results.isEmpty()) {
         // Camera processed a new frame since last
@@ -82,22 +82,57 @@ public class Vision extends SubsystemBase {
             for (var target : result.getTargets()) {
                 if (target.getFiducialId() == 8) {
                     // Found Tag 8, record its information
-                    targetYaw = target.getYaw();
                     targetVisible = true;
+                    targetYaw = target.getYaw();
+                    targetArea = target.getArea();
+                    SmartDashboard.putNumber("PC yaw", targetYaw);
+                    SmartDashboard.putNumber("PC area", targetArea);
+                    SmartDashboard.putString("PC best to target", target.getBestCameraToTarget().toString());
+                    SmartDashboard.putString("PC alt to target", target.getAlternateCameraToTarget().toString());
+                    SmartDashboard.putNumber("PC pitch",target.getPitch());
+                    SmartDashboard.putNumber("PC skew", target.getSkew());
+
+
+                    targetRange = PhotonUtils.calculateDistanceToTargetMeters(
+                      0.5, // Height off floor, measured with a tape measure, or in CAD.
+                      1.435, // From 2024 game manual for ID 7
+                      Math.toRadians(-30.0),// Measured with a protractor, or in CAD.
+                      Math.toRadians(target.getPitch()));
+
+                    SmartDashboard.putNumber("PC range", targetRange);
+                    
+                } else {
+                  targetYaw = 0;
+                  targetRange = 0;
+                  targetArea = 18;
                 }
+                SmartDashboard.putBoolean("results.isEmpty", results.isEmpty());
+                //SmartDashboard.putArray("getTargets", result.getTargets);
+                SmartDashboard.putNumber("target's Yaw", targetYaw);
             }
+        } else {
+          targetYaw = 0;
+          targetRange = 0;
+          targetArea = 18;
         }
     }
-    SmartDashboard.putBoolean("results.isEmpty", results.isEmpty());
-    //SmartDashboard.putArray("getTargets", result.getTargets);
-    SmartDashboard.putNumber("timesThrough", timesThrough);
-    SmartDashboard.putNumber("target's Yaw", targetYaw);
+    
+  }
+
+  public double targetYaw(){    
+    SmartDashboard.putNumber("V TargetYaw", targetYaw);
     return targetYaw;
     //-1.0 * targetYaw * VisionConstants.turningP * DriveConstants.kMaxAngularSpeed   
 
   }
 
-  //public void return
+  public double targetRange(){
+    return targetRange;
+  }
+
+  public double targetArea(){
+    return targetArea;
+  }
 
 
 

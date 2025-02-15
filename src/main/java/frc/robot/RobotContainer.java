@@ -99,10 +99,11 @@ public class RobotContainer {
     new JoystickButton(m_driverController, Button.kL1.value)
       .whileTrue(new RunCommand(
         () -> m_robotDrive.lineUpDrive(
-          -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(piCam.targetYaw(), OIConstants.kDriveDeadband),
-                false
+          piCam.targetArea,
+          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+          piCam.targetYaw(),
+          false,
+          18
         ), 
         m_robotDrive));
   }

@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -338,16 +339,21 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
-  public void lineUpDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative){
-    System.out.println(xSpeed);
+  public void lineUpDrive(double targetArea, double ySpeed, double rot, boolean fieldRelative, double desiredArea){
+    System.out.println(targetArea);
     System.out.println(ySpeed);
     System.out.println(rot);
     System.out.println(fieldRelative);
-    // Convert the commanded speeds into the correct units for the drivetrain
-    double rotDelivered = -1.0 * rot * VisionConstants.turningP * DriveConstants.kMaxAngularSpeed;
-    SmartDashboard.putNumber("vision rotDelivered", rotDelivered);
 
-    double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+//-MathUtil.applyDeadband(piCam.targetRange, OIConstants.kDriveDeadband)
+//                -MathUtil.applyDeadband(piCam.targetYaw(), OIConstants.kDriveDeadband),
+
+    // Convert the commanded speeds into the correct units for the drivetrain
+    double rotDelivered = rot * VisionConstants.turningP * DriveConstants.kMaxAngularSpeed;
+    SmartDashboard.putNumber("vision rotDelivered", rotDelivered);
+    //double xSpeedDelivered = (desiredDistance - targetRange) * VisionConstants.strafeP * DriveConstants.kMaxSpeedMetersPerSecond;
+    double xSpeedDelivered = (desiredArea-targetArea) * -0.1;
+    System.out.println("xspeedDelivered" + xSpeedDelivered);
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(

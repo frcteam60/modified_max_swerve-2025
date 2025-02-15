@@ -133,7 +133,8 @@ public final class Constants {
   }
 
   public static final class VisionConstants{
-    public static final double turningP = 2.5;
+    public static final double turningP = -0.1;
+    public static final double strafeP = -0.3;
   
     
   }
