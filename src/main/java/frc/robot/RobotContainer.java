@@ -33,6 +33,8 @@ import java.util.List;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+
 
 
 /*
@@ -44,7 +46,9 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final Vision piCam = new Vision();
+
+  //TODO add back in
+  //private final Vision piCam = new Vision();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -95,8 +99,40 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
+    new POVButton(m_driverController, 0)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.turnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
+          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
+          0, 
+          true), 
+          m_robotDrive));
 
-    new JoystickButton(m_driverController, Button.kL1.value)
+    new POVButton(m_driverController, 270)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.turnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
+          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
+          90, 
+          true), 
+          m_robotDrive));
+
+    new POVButton(m_driverController, 90)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.turnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
+          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
+          270, 
+          true), 
+          m_robotDrive));
+
+    new POVButton(m_driverController, 180)
+          .whileTrue(new RunCommand(
+            () -> m_robotDrive.turnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
+            -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
+            180, 
+            true), 
+            m_robotDrive));
+
+    //TODO add back in
+    /* new JoystickButton(m_driverController, Button.kL1.value)
       .whileTrue(new RunCommand(
         () -> m_robotDrive.lineUpDrive(
           piCam.targetArea,
@@ -105,7 +141,7 @@ public class RobotContainer {
           false,
           18
         ), 
-        m_robotDrive));
+        m_robotDrive)); */
   }
   //Method for displaying abs encoder values for finding offset
   public void displayAbsoluteAngle(){

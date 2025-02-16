@@ -329,6 +329,59 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
+
+  // Subtracts two angles
+  public double angleSubtractor (double firstAngle, double secondAngle) {
+    // 
+     double result = ((firstAngle - secondAngle) + 360180)%360 - 180;
+     return result;
+
+  }
+
+  /**
+   * Method to drive the robot using joystick info.
+   *
+   * @param xSpeed        Speed of the robot in the x direction (forward).
+   * @param ySpeed        Speed of the robot in the y direction (sideways).
+   * @param desiredAngle           Angle of the robot.
+   * @param fieldRelative Whether the provided x and y speeds are relative to the
+   *                      field.
+   */
+  public void turnDrive(double xSpeed, double ySpeed, double desiredAngle, boolean fieldRelative) {
+    System.out.println(xSpeed);
+    System.out.println(ySpeed);
+    System.out.println(desiredAngle);
+    System.out.println(fieldRelative);
+    // Convert the commanded speeds into the correct units for the drivetrain
+    double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    double rotDelivered = (angleSubtractor(desiredAngle, yaw))* 0.01 * DriveConstants.kMaxAngularSpeed;
+
+    /* public void optimize(Rotation2d currentAngle) {
+      var delta = angle.minus(currentAngle);
+      if (Math.abs(delta.getDegrees()) > 90.0) {
+        speedMetersPerSecond *= -1;
+        angle = angle.rotateBy(Rotation2d.kPi);
+      }
+    } */
+
+    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+        fieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
+                //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)))
+                Rotation2d.fromDegrees(yaw))
+            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    System.out.println("zero"+ swerveModuleStates[0].toString());
+    System.out.println("one"+ swerveModuleStates[1].toString());
+    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_rearLeft.setDesiredState(swerveModuleStates[2]);
+    m_rearRight.setDesiredState(swerveModuleStates[3]);
+  }
+
+
   /**
    * Sets the wheels into an X formation to prevent movement.
    */
