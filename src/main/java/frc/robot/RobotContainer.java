@@ -48,7 +48,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   //TODO add back in
-  //private final Vision piCam = new Vision();
+  private final Vision piCam = new Vision();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -99,6 +99,9 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
+
+
+
     new POVButton(m_driverController, 0)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.turnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
@@ -132,16 +135,16 @@ public class RobotContainer {
             m_robotDrive));
 
     //TODO add back in
-    /* new JoystickButton(m_driverController, Button.kL1.value)
+    new JoystickButton(m_driverController, Button.kL1.value)
       .whileTrue(new RunCommand(
         () -> m_robotDrive.lineUpDrive(
           piCam.targetArea,
           -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
           piCam.targetYaw(),
           false,
-          18
+          9//18
         ), 
-        m_robotDrive)); */
+        m_robotDrive)); 
   }
   //Method for displaying abs encoder values for finding offset
   public void displayAbsoluteAngle(){

@@ -7,7 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "pushAuto"
+            "pathName": "New Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PushBot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "goToReef"
           }
         }
       ]

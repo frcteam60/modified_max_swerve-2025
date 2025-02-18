@@ -409,6 +409,10 @@ public class DriveSubsystem extends SubsystemBase {
     System.out.println("xspeedDelivered" + xSpeedDelivered);
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
 
+    rotDelivered = 0.25 * rotDelivered;
+    xSpeedDelivered = 0.5 * xSpeedDelivered;
+    ySpeedDelivered = 0.5 * ySpeedDelivered;
+
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,

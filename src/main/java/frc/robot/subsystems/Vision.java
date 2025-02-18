@@ -55,7 +55,8 @@ import java.util.function.Consumer;
 public class Vision extends SubsystemBase {
   
   //
-  PhotonCamera camera = new PhotonCamera("rpi-cam");
+  //PhotonCamera camera = new PhotonCamera("rpi-cam");
+  PhotonCamera camera = new PhotonCamera("Arducam_OV9782_USB_Camera");
   public double targetYaw = 0;
   public double targetRange = 0;
   public double targetArea = 0;
