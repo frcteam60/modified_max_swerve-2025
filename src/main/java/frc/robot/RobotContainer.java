@@ -61,6 +61,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    piCam.getEstimatedGlobalPose();
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(

@@ -94,7 +94,8 @@ public class Vision extends SubsystemBase {
   //PhotonCamera camera = new PhotonCamera("rpi-cam");
   PhotonCamera camera;
   PhotonPoseEstimator photonPoseEstimator;
-  private Matrix<N3, N1> curStdDevs;
+
+  private Matrix<N3, N1> curStdDevs = VecBuilder.fill(0, 0, 0);
 
 
   public double targetYaw = 0;
@@ -118,7 +119,7 @@ public class Vision extends SubsystemBase {
     //TODO add Vision Constants
     camera  = new PhotonCamera("Arducam_OV9782_USB_Camera");
     // Construct PhotonPoseEstimator
-    photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, robotToCam);
+    photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
     photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
   }
@@ -128,7 +129,11 @@ public class Vision extends SubsystemBase {
     // Read in relevant data from the Camera
     var results = camera.getAllUnreadResults();
 
-    getEstimatedGlobalPose();
+    SmartDashboard.putString("Vision estimated glolbal pose", getEstimatedGlobalPose().toString());
+    //getEstimatedGlobalPose()
+
+    
+    
 
     if (!results.isEmpty()) {
         // Camera processed a new frame since last

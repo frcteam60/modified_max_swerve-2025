@@ -7,6 +7,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -14,6 +17,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -80,6 +85,8 @@ public class DriveSubsystem extends SubsystemBase {
   double yaw = 0;
   double yawOffset = 0;
 
+  private final Vision piCam = new Vision();
+
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
@@ -92,64 +99,27 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
       });
 
-  /* // SysId stuff
-  private final Config sysIdConfig = new Config();
-  private final Consumer<Voltage> c_drive;
-  private final Consumer<SysIdRoutineLog> c_log;
-  
-  //TODO fix this stuff
-  //private final Mechanism sysIdMechanism = new Mechanism(this::voltageDrive, this::logMotors, this);
-  private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
-    sysIdConfig, 
-    new SysIdRoutine.Mechanism(this::voltageDrive, this::logMotors, this)
-  );
-
-  // Create a new SysId routine for characterizing the drive.
-  private final SysIdRoutine m_sysIdRoutine =
-      new SysIdRoutine(
-          // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-          new SysIdRoutine.Config(),
-          new SysIdRoutine.Mechanism(
-              // Tell SysId how to plumb the driving voltage to the motors.
-              voltage -> {
-                m_frontLeft.voltageControl(voltage);
-                m_rearLeft.voltageControl(voltage);
-                m_frontRight.voltageControl(voltage);
-                m_rearRight.voltageControl(voltage);
-                //m_leftMotor.setVoltage(voltage);
-                //m_rightMotor.setVoltage(voltage); 
-              },
-              // Tell SysId how to record a frame of data for each motor on the mechanism being
-              // characterized.
-              log -> {
-                // Record a frame for the left motors.  Since these share an encoder, we consider
-                // the entire group to be one motor.
-                log.motor("front-left")
-                    .voltage(
-                        m_appliedVoltage.mut_replace(
-                            m_leftMotor.get() * RobotController.getBatteryVoltage(), Volts))
-                    .linearPosition(m_distance.mut_replace(m_leftEncoder.getDistance(), Meters))
-                    .linearVelocity(
-                        m_velocity.mut_replace(m_leftEncoder.getRate(), MetersPerSecond));
-                // Record a frame for the right motors.  Since these share an encoder, we consider
-                // the entire group to be one motor.
-                log.motor("drive-right")
-                    .voltage(
-                        m_appliedVoltage.mut_replace(
-                            m_rightMotor.get() * RobotController.getBatteryVoltage(), Volts))
-                    .linearPosition(m_distance.mut_replace(m_rightEncoder.getDistance(), Meters))
-                    .linearVelocity(
-                        m_velocity.mut_replace(m_rightEncoder.getRate(), MetersPerSecond));
-              },
-              // Tell SysId to make generated commands require this subsystem, suffix test state in
-              // WPILog with this subsystem's name ("drive")
-              this)); */
+  // The robot pose estimator for tracking swerve odometry and applying vision corrections.
+  private final SwerveDrivePoseEstimator poseEstimator;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
     setEncoder();
+
+    poseEstimator =
+                new SwerveDrivePoseEstimator(
+                        DriveConstants.kDriveKinematics,
+                        Rotation2d.fromDegrees(yaw),
+                        new SwerveModulePosition[] {
+                          m_frontLeft.getPosition(),
+                          m_frontRight.getPosition(),
+                          m_rearLeft.getPosition(),
+                          m_rearRight.getPosition()},
+                        new Pose2d(),
+                        VecBuilder.fill(0, 0, 0),
+                        piCam.getEstimationStdDevs());
 
     //AutoBuider Config for PathPlanner
     RobotConfig config;
@@ -199,7 +169,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("BL Encoder Relative", m_rearLeft.returnModuleAngle());
     SmartDashboard.putNumber("FR Encoder Relative", m_frontRight.returnModuleAngle());
     SmartDashboard.putNumber("BR Encoder Relative", m_rearRight.returnModuleAngle());
-
+    
     m_odometry.update(
         //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         Rotation2d.fromDegrees(yaw),
@@ -209,6 +179,18 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+    poseEstimator.update(
+      Rotation2d.fromDegrees(yaw), 
+      new SwerveModulePosition[] {
+        m_frontLeft.getPosition(),
+        m_frontRight.getPosition(),
+        m_rearLeft.getPosition(),
+        m_rearRight.getPosition()
+      });
+    addVisionMeasurement(poseEstimator.getEstimatedPosition(), yaw);
+    SmartDashboard.putString("PoseEstimator", poseEstimator.getEstimatedPosition().toString());
+    
   }
 
 
@@ -477,6 +459,17 @@ public class DriveSubsystem extends SubsystemBase {
   public double getTurnRate() {
     //return m_gyro.getRate(IMUAxis.kZ) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
     return yaw * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  /** See {@link SwerveDrivePoseEstimator#addVisionMeasurement(Pose2d, double)}. */
+  public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
+    poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
+  }
+
+  /** See {@link SwerveDrivePoseEstimator#addVisionMeasurement(Pose2d, double, Matrix)}. */
+  public void addVisionMeasurement(
+          Pose2d visionMeasurement, double timestampSeconds, Matrix<N3, N1> stdDevs) {
+      poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
   }
 
 
