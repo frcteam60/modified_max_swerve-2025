@@ -9,9 +9,12 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -19,6 +22,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
@@ -27,13 +33,18 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.robot.Constants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj.Timer;
 
 import java.lang.invoke.VolatileCallSite;
+import java.security.PublicKey;
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -81,9 +92,11 @@ public class DriveSubsystem extends SubsystemBase {
   // The gyro sensor
   //private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
 
+  Timer time;
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   double yaw = 0;
   double yawOffset = 0;
+  Pose2d testPose2d = new Pose2d();
 
   private final Vision piCam = new Vision();
 
@@ -107,6 +120,8 @@ public class DriveSubsystem extends SubsystemBase {
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
     setEncoder();
+
+    time = new Timer();
 
     poseEstimator =
                 new SwerveDrivePoseEstimator(
@@ -179,7 +194,36 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+    
+    //poseEstimator with vision odom update
+    updatePoseEstimator();
+      
+    //poseEstimator.addVisionMeasurement(visionMeasurement, time.getFPGATimestamp());
+    //addVisionMeasurement(piCam.getEstimatedGlobalPose(), time.getFPGATimestamp());
 
+    // Correct pose estimate with vision measurements
+    var visionEst = piCam.getEstimatedGlobalPose();
+    visionEst.ifPresent(
+            // est seems to be standing in for EstimatedRobotPose gotten from getEstimatedGlobalPose()
+            est -> {
+              System.out.println("Vision Est is present");
+                testPose2d = est.estimatedPose.toPose2d();
+                SmartDashboard.putString("V Est pose", testPose2d.toString());
+                // Change our trust in the measurement based on the tags we can see
+                var estStdDevs = piCam.getEstimationStdDevs();
+                addVisionMeasurement(
+                  est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs
+                );
+                /* poseEstimator.addVisionMeasurement(
+                        est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs); */
+            });
+
+    SmartDashboard.putNumber("PoseEstimator_X", poseEstimator.getEstimatedPosition().getX());
+    SmartDashboard.putNumber("PoseEstimator_Y", poseEstimator.getEstimatedPosition().getY());
+    
+  }
+
+  public void updatePoseEstimator(){
     poseEstimator.update(
       Rotation2d.fromDegrees(yaw), 
       new SwerveModulePosition[] {
@@ -188,12 +232,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_rearLeft.getPosition(),
         m_rearRight.getPosition()
       });
-    addVisionMeasurement(poseEstimator.getEstimatedPosition(), yaw);
-    SmartDashboard.putString("PoseEstimator", poseEstimator.getEstimatedPosition().toString());
-    
   }
-
-
   public void logMotors(){
     
   }
@@ -478,5 +517,65 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("BL Encoder abs", m_rearLeft.returnAbsAngle());
     SmartDashboard.putNumber("FR Encoder abs", m_frontRight.returnAbsAngle());
     SmartDashboard.putNumber("BR Encoder abs", m_rearRight.returnAbsAngle());
+  }
+
+  //look into Command file for this
+  public void lineUpWith18(){
+    //TODO may need to tune auto loops
+
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics);
+
+    // A trajectory to follow. All units in meters.
+    Trajectory to18Trajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        getPose(),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(getPose().getX(), getPose().getY())),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(3, 0, new Rotation2d(0)),
+        config);
+
+
+    
+    var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+        to18Trajectory,
+        getPose(), // Functional interface to feed supplier
+        DriveConstants.kDriveKinematics,
+
+        // Position controllers
+        new PIDController(AutoConstants.kPXController, 0, 0),
+        new PIDController(AutoConstants.kPYController, 0, 0),
+        thetaController,
+        get,
+        this);
+
+    SwerveControllerCommand mySwerveControllerCommand = new SwerveControllerCommand(
+        testTrajectory,
+        m_robotDrive::getPose, // Functional interface to feed supplier
+        DriveConstants.kDriveKinematics,
+    
+        // Position controllers
+        new PIDController(AutoConstants.kPXController, 0, 0),
+        new PIDController(AutoConstants.kPYController, 0, 0),
+        thetaController,
+        m_robotDrive::setModuleStates,
+        m_robotDrive);
+
+    // Reset odometry to the starting pose of the trajectory.
+    resetOdometry(to18Trajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    return mySwerveControllerCommand.andThen(() -> drive(0, 0, 0, false));
+
   }
 }

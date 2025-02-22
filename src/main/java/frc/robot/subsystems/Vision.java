@@ -105,7 +105,7 @@ public class Vision extends SubsystemBase {
 
 
   // The field from AprilTagFields will be different depending on the game.
-  AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
   //TODO Camera position on robot
   Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
@@ -128,14 +128,18 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     // Read in relevant data from the Camera
     var results = camera.getAllUnreadResults();
+    //Optional<EstimatedRobotPose> 3dResults = getEstimatedGlobalPose();
 
-    SmartDashboard.putString("Vision estimated glolbal pose", getEstimatedGlobalPose().toString());
+    /* if (!3dresults.isEmpty()) {
+      var 3dresults =  */
+    //SmartDashboard.putString("Vision estimated glolbal pose", getEstimatedGlobalPose());
     //getEstimatedGlobalPose()
 
     
     
 
     if (!results.isEmpty()) {
+      SmartDashboard.putString("Vision estimated glolbal pose", getEstimatedGlobalPose().toString());
         // Camera processed a new frame since last
         // Get the last one in the list.
         var result = results.get(results.size() - 1);
@@ -196,8 +200,6 @@ public class Vision extends SubsystemBase {
         for (var change : camera.getAllUnreadResults()) {
             visionEst = photonPoseEstimator.update(change);
             updateEstimationStdDevs(visionEst, change.getTargets());
-
-            
         }
         return visionEst;
     }
