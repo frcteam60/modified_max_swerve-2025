@@ -99,20 +99,9 @@ public class DriveSubsystem extends SubsystemBase {
   Pose2d testPose2d = new Pose2d(0,0, Rotation2d.fromDegrees(0));
 
   boolean visionEstIsPresent = false;
+  var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
 
   private final Vision piCam = new Vision();
-
-  // Odometry class for tracking robot pose
-  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
-      DriveConstants.kDriveKinematics,
-      //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
-      Rotation2d.fromDegrees(yaw),
-      new SwerveModulePosition[] {
-          m_frontLeft.getPosition(),
-          m_frontRight.getPosition(),
-          m_rearLeft.getPosition(),
-          m_rearRight.getPosition()
-      });
 
   // The robot pose estimator for tracking swerve odometry and applying vision corrections.
   private final SwerveDrivePoseEstimator poseEstimator;
@@ -135,7 +124,7 @@ public class DriveSubsystem extends SubsystemBase {
                           m_rearLeft.getPosition(),
                           m_rearRight.getPosition()},
                         new Pose2d(),
-                        VecBuilder.fill(0, 0, 0),
+                        stateStDevs,
                         piCam.getEstimationStdDevs());
 
     //AutoBuider Config for PathPlanner
@@ -187,8 +176,9 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("FR Encoder Relative", m_frontRight.returnModuleAngle());
     SmartDashboard.putNumber("BR Encoder Relative", m_rearRight.returnModuleAngle());
     
-    SmartDashboard.putString("robotOnField Odom", m_odometry.getPoseMeters().toString());
-    m_odometry.update(
+    SmartDashboard.putString("robotOnField Odom", poseEstimator.getEstimatedPosition().toString());
+   
+    poseEstimator.update(
         //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         Rotation2d.fromDegrees(yaw),
         new SwerveModulePosition[] {
@@ -198,8 +188,6 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
     
-    //poseEstimator with vision odom update
-    updatePoseEstimator();
       
     //poseEstimator.addVisionMeasurement(visionMeasurement, time.getFPGATimestamp());
     //addVisionMeasurement(piCam.getEstimatedGlobalPose(), time.getFPGATimestamp());
@@ -240,16 +228,7 @@ public class DriveSubsystem extends SubsystemBase {
     return testPose2d;
   }
 
-  public void updatePoseEstimator(){
-    poseEstimator.update(
-      Rotation2d.fromDegrees(yaw), 
-      new SwerveModulePosition[] {
-        m_frontLeft.getPosition(),
-        m_frontRight.getPosition(),
-        m_rearLeft.getPosition(),
-        m_rearRight.getPosition()
-      });
-  }
+ 
   public void logMotors(){
     
   }
@@ -275,8 +254,8 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    System.out.println("look! "+ m_odometry.getPoseMeters());
-    return m_odometry.getPoseMeters();
+    System.out.println("look! "+ poseEstimator.getEstimatedPosition());
+    return poseEstimator.getEstimatedPosition();
   }
 
   public ChassisSpeeds getRobotRelativeSpeeds(){
@@ -299,7 +278,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   //Warning this equals resetPose basically for PathPlanner
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(
+    poseEstimator.resetPosition(
         //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         Rotation2d.fromDegrees(yaw),
         new SwerveModulePosition[] {

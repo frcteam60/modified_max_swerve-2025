@@ -127,9 +127,6 @@ public class Vision extends SubsystemBase {
     //SmartDashboard.putString("Vision estimated glolbal pose", getEstimatedGlobalPose());
     //getEstimatedGlobalPose()
 
-    
-    
-
     if (!results.isEmpty()) {
       SmartDashboard.putString("Vision estimated glolbal pose", getEstimatedGlobalPose().toString());
         // Camera processed a new frame since last
@@ -149,7 +146,6 @@ public class Vision extends SubsystemBase {
                     SmartDashboard.putString("PC alt to target", target.getAlternateCameraToTarget().toString());
                     SmartDashboard.putNumber("PC pitch",target.getPitch());
                     SmartDashboard.putNumber("PC skew", target.getSkew());
-
 
                     targetRange = PhotonUtils.calculateDistanceToTargetMeters(
                       0.5, // Height off floor, measured with a tape measure, or in CAD.
@@ -243,6 +239,9 @@ public class Vision extends SubsystemBase {
                 curStdDevs = estStdDevs;
             }
         }
+        SmartDashboard.putNumber("curStdDevs 1", curStdDevs.get(1, 0));
+        SmartDashboard.putNumber("curStdDevs 2", curStdDevs.get(2, 0));
+        SmartDashboard.putNumber("curStdDevs 0", curStdDevs.get(0, 0));
     }
 
     /**
