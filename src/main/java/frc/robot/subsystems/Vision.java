@@ -103,23 +103,15 @@ public class Vision extends SubsystemBase {
   public double targetArea = 0;
   public boolean targetVisible = false;
 
-
-  // The field from AprilTagFields will be different depending on the game.
-  AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-
   //TODO Camera position on robot
-  Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
-  
-
-
-  
+   
 
   /** Creates a new DriveSubsystem. */
   public Vision() {
     //TODO add Vision Constants
-    camera  = new PhotonCamera("Arducam_OV9782_USB_Camera");
+    camera  = new PhotonCamera(kCameraName);
     // Construct PhotonPoseEstimator
-    photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
+    photonPoseEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, kRobotToCam);
     photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
   }

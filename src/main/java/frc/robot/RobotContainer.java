@@ -10,15 +10,19 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.spline.Spline;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator.ControlVectorList;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
+//import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -28,6 +32,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+//import edu.wpi.first.wpilibj2.command
+import edu.wpi.first.math.spline.QuinticHermiteSpline;
+import edu.wpi.first.math.util.Units;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -35,7 +45,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
-
+//TODO figure out where I need vision, drive or container
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -96,12 +106,18 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
+    new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-
+    new JoystickButton(m_driverController, Button.kY.value)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.resetOdometry(new Pose2d(10, 10, Rotation2d.fromDegrees(0))), m_robotDrive));
+          
+    // Lines
+    new JoystickButton(m_driverController, Button.kLeftBumper.value)
+        .whileTrue(goTo(new Pose2d(2,2, Rotation2d.fromDegrees(0))));
 
     new POVButton(m_driverController, 0)
         .whileTrue(new RunCommand(
@@ -136,7 +152,7 @@ public class RobotContainer {
             m_robotDrive));
 
     //TODO add back in
-    new JoystickButton(m_driverController, Button.kL1.value)
+    /* new JoystickButton(m_driverController, Button.kL1.value)
       .whileTrue(new RunCommand(
         () -> m_robotDrive.lineUpDrive(
           piCam.targetArea,
@@ -145,12 +161,176 @@ public class RobotContainer {
           false,
           9//18
         ), 
-        m_robotDrive)); 
+        m_robotDrive));  */
   }
   //Method for displaying abs encoder values for finding offset
   public void displayAbsoluteAngle(){
     m_robotDrive.displayAbsValues();
   }
+
+  public Command lineUp18(){
+    double startPoseX;
+    double startPoseY;
+    //TODO only when vision is reliable
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics);
+    
+    /* // A trajectory to follow. All units in meters.
+    Trajectory to18Trajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        /* m_robotDrive.isVisionEstPresent() 
+          ? m_robotDrive.returnVisionEst()
+          : m_robotDrive.getPose() //comment out ends here //TODO
+        m_robotDrive.getPose(),
+        // Pass through these two interior waypoints, making an 's' curve path
+        //List.of(new Translation2d(m_robotDrive.getPose().getX(), m_robotDrive.getPose().getY())),
+        List.of(m_robotDrive.getPose().getTranslation()),
+
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(2.66, 4.03, new Rotation2d(0)),
+        config); */
+    
+    // 2018 cross scale auto waypoints.
+    var sideStart = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23),
+        Rotation2d.fromDegrees(-180));
+    var crossScale = new Pose2d(Units.feetToMeters(23.7), Units.feetToMeters(6.8),
+        Rotation2d.fromDegrees(-160));
+
+    System.out.println(m_robotDrive.isVisionEstPresent() 
+        ? m_robotDrive.returnVisionEst().getTranslation()
+        : m_robotDrive.getPose().getTranslation() + "see it prints");
+    
+    var interiorWaypoints = new ArrayList<Translation2d>();
+    interiorWaypoints.add(m_robotDrive.isVisionEstPresent() 
+      ? m_robotDrive.returnVisionEst().getTranslation()
+      : m_robotDrive.getPose().getTranslation());
+    
+    var startPose = m_robotDrive.isVisionEstPresent() 
+    ? m_robotDrive.returnVisionEst()
+    : m_robotDrive.getPose();    
+    
+  
+    //If x or y are 0 or 0.001 change to 0.01
+    if(Math.abs(startPose.getX()) < 0.01){
+      startPoseX = 0.01; 
+    } else {
+      startPoseX = startPose.getX();
+    };
+
+    if(Math.abs(startPose.getY()) < 0.01){
+      startPoseY = 0.01; 
+    } else {
+      startPoseY = startPose.getY();
+    };
+
+    startPose = new Pose2d(startPoseX, startPoseY, startPose.getRotation());
+    
+    System.out.println("startPose " + startPose.toString());
+
+    var trajectory = TrajectoryGenerator.generateTrajectory(
+      startPose,
+      interiorWaypoints,
+      crossScale,
+      config);
+    
+    var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+        trajectory,
+        m_robotDrive::getPose, // Functional interface to feed supplier
+        DriveConstants.kDriveKinematics,
+
+        // Position controllers
+        new PIDController(AutoConstants.kPXController, 0, 0),
+        new PIDController(AutoConstants.kPYController, 0, 0),
+        thetaController,
+        m_robotDrive::setModuleStates,
+        m_robotDrive);
+
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(trajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+
+  }
+  public Command goTo(Pose2d desiredPose){
+    double startPoseX;
+    double startPoseY;
+    Pose2d endPose = new Pose2d(2.01, 2, Rotation2d.fromDegrees(1));
+    //TODO only when vision is reliable
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics);
+
+    
+    
+    var startPose = m_robotDrive.getPose();    
+    
+    //If x or y are 0 or 0.001 change to 0.01
+    if(Math.abs(startPose.getX()) < 0.01){
+      startPoseX = 0.01; 
+    } else {
+      startPoseX = startPose.getX();
+    };
+
+    if(Math.abs(startPose.getY()) < 0.01){
+      startPoseY = 0.01; 
+    } else {
+      startPoseY = startPose.getY();
+    };
+
+    startPose = new Pose2d(startPoseX, startPoseY, startPose.getRotation());
+
+    //TODO take following line out
+    startPose = new Pose2d(0.01, 0.01, Rotation2d.fromDegrees(1));
+
+    var interiorWaypoints = new ArrayList<Translation2d>();
+    interiorWaypoints.add(new Translation2d(1, 1));
+    
+    System.out.println("startPose " + startPose.toString());
+
+    var trajectory = TrajectoryGenerator.generateTrajectory(
+      startPose,
+      interiorWaypoints,
+      endPose,
+      config);
+    
+    var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+        trajectory,
+        m_robotDrive::getPose, // Functional interface to feed supplier
+        DriveConstants.kDriveKinematics,
+
+        // Position controllers
+        new PIDController(AutoConstants.kPXController, 0, 0),
+        new PIDController(AutoConstants.kPYController, 0, 0),
+        thetaController,
+        m_robotDrive::setModuleStates,
+        m_robotDrive);
+
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(trajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+
+  }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -219,7 +399,7 @@ public class RobotContainer {
     return mySwerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
   }
 
-  public Command getSecondAutoCommand(){
+  public Command  getSecondAutoCommand(){
     //-TO-DO- load this when code starts not when this called here //I think this should be fine because its like the coconuts last year
     //return new PathPlannerAuto("Test Auto");
     return autoChooser.getSelected();

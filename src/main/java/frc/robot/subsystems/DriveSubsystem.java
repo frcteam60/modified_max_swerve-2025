@@ -96,7 +96,9 @@ public class DriveSubsystem extends SubsystemBase {
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   double yaw = 0;
   double yawOffset = 0;
-  Pose2d testPose2d = new Pose2d();
+  Pose2d testPose2d = new Pose2d(0,0, Rotation2d.fromDegrees(0));
+
+  boolean visionEstIsPresent = false;
 
   private final Vision piCam = new Vision();
 
@@ -185,6 +187,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("FR Encoder Relative", m_frontRight.returnModuleAngle());
     SmartDashboard.putNumber("BR Encoder Relative", m_rearRight.returnModuleAngle());
     
+    SmartDashboard.putString("robotOnField Odom", m_odometry.getPoseMeters().toString());
     m_odometry.update(
         //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         Rotation2d.fromDegrees(yaw),
@@ -207,6 +210,7 @@ public class DriveSubsystem extends SubsystemBase {
             // est seems to be standing in for EstimatedRobotPose gotten from getEstimatedGlobalPose()
             est -> {
               System.out.println("Vision Est is present");
+                visionEstIsPresent = true;
                 testPose2d = est.estimatedPose.toPose2d();
                 SmartDashboard.putString("V Est pose", testPose2d.toString());
                 // Change our trust in the measurement based on the tags we can see
@@ -216,11 +220,24 @@ public class DriveSubsystem extends SubsystemBase {
                 );
                 /* poseEstimator.addVisionMeasurement(
                         est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs); */
-            });
+            }
+            );
+    
+    if(visionEst.isEmpty()){
+      visionEstIsPresent = false;
+    }
 
     SmartDashboard.putNumber("PoseEstimator_X", poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("PoseEstimator_Y", poseEstimator.getEstimatedPosition().getY());
     
+  }
+
+  public boolean isVisionEstPresent(){
+    return visionEstIsPresent;
+  }
+
+  public Pose2d returnVisionEst(){
+    return testPose2d;
   }
 
   public void updatePoseEstimator(){
@@ -258,6 +275,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
+    System.out.println("look! "+ m_odometry.getPoseMeters());
     return m_odometry.getPoseMeters();
   }
 
@@ -271,6 +289,8 @@ public class DriveSubsystem extends SubsystemBase {
       m_rearRight.getState()
   );
   }
+
+  
 
   /**
    * Resets the odometry to the specified pose.
@@ -519,7 +539,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("BR Encoder abs", m_rearRight.returnAbsAngle());
   }
 
-  //look into Command file for this
+/*   //look into Command file for this
   public void lineUpWith18(){
     //TODO may need to tune auto loops
 
@@ -555,7 +575,7 @@ public class DriveSubsystem extends SubsystemBase {
         new PIDController(AutoConstants.kPXController, 0, 0),
         new PIDController(AutoConstants.kPYController, 0, 0),
         thetaController,
-        get,
+       etModuleStates,
         this);
 
     SwerveControllerCommand mySwerveControllerCommand = new SwerveControllerCommand(
@@ -576,6 +596,6 @@ public class DriveSubsystem extends SubsystemBase {
     // Run path following command, then stop at the end.
     //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
     return mySwerveControllerCommand.andThen(() -> drive(0, 0, 0, false));
-
-  }
+ 
+  } */
 }
