@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -111,13 +112,20 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
+    // resets Odom to 1, 1, 0
     new JoystickButton(m_driverController, Button.kY.value)
         .whileTrue(new RunCommand(
-          () -> m_robotDrive.resetOdometry(new Pose2d(10, 10, Rotation2d.fromDegrees(0))), m_robotDrive));
+          () -> m_robotDrive.resetOdometry(new Pose2d(1, 1, Rotation2d.fromDegrees(0))), m_robotDrive));
           
-    // Lines
+    /* // Line up 12in before tag 18
     new JoystickButton(m_driverController, Button.kLeftBumper.value)
-        .whileTrue(goTo(new Pose2d(2,2, Rotation2d.fromDegrees(0))));
+        //.whileTrue(goTo(new Pose2d(3.66-(RobotConstants.robotWidthWithBumpers/2) + inToMeter(12), 4.03, Rotation2d.fromDegrees(0))));
+        .whileTrue(new RunCommand(goTo(null, null), null)); */
+
+    // Line up 12in before tag 18
+    new JoystickButton(m_driverController, Button.kLeftBumper.value)
+        //.whileTrue(goTo(new Pose2d(3.66-(RobotConstants.robotWidthWithBumpers/2) + inToMeter(12), 4.03, Rotation2d.fromDegrees(0))));
+        .whileTrue(goTo(m_robotDrive.getPose(), new Pose2d(3.66 , 4.03, Rotation2d.fromDegrees(0))));
 
     new POVButton(m_driverController, 0)
         .whileTrue(new RunCommand(
@@ -261,10 +269,15 @@ public class RobotContainer {
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
 
   }
-  public Command goTo(Pose2d desiredPose){
-    double startPoseX;
-    double startPoseY;
-    Pose2d endPose = new Pose2d(2.01, 2, Rotation2d.fromDegrees(1));
+
+  /* public Command goToReef(){
+
+  } */
+  public Command goTo(Pose2d startPose, Pose2d desiredPose){
+    System.out.println("This is in goTo");
+    //double startPoseX;
+    //double startPoseY;
+    
     //TODO only when vision is reliable
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
@@ -273,10 +286,32 @@ public class RobotContainer {
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(DriveConstants.kDriveKinematics);
 
+    // sets our start pose as our current pose
+    //var startPose = m_robotDrive.getPose(); 
+    SmartDashboard.putString("startPose", startPose.toString());
+    System.out.println("startPose");
+
+    // add start and end translations
+    Translation2d midPoint = startPose.getTranslation().plus(desiredPose.getTranslation());
     
+    // divides by 2 to get the average or the midpoint between the two points
+    midPoint = midPoint.div(2);
+    SmartDashboard.putString("midpoint", midPoint.toString());
+    System.out.println("midpoint");
+    SmartDashboard.putString("desiredPose", desiredPose.toString());
+    System.out.println("desiredPose");
+    var interiorWaypoints = new ArrayList<Translation2d>();
+    interiorWaypoints.add(midPoint);
     
-    var startPose = m_robotDrive.getPose();    
+    System.out.println("startPose " + startPose.toString());
+
+    var trajectory = TrajectoryGenerator.generateTrajectory(
+      startPose,
+      interiorWaypoints,
+      desiredPose,
+      config);
     
+  /*      
     //If x or y are 0 or 0.001 change to 0.01
     if(Math.abs(startPose.getX()) < 0.01){
       startPoseX = 0.01; 
@@ -290,21 +325,8 @@ public class RobotContainer {
       startPoseY = startPose.getY();
     };
 
-    startPose = new Pose2d(startPoseX, startPoseY, startPose.getRotation());
+    startPose = new Pose2d(startPoseX, startPoseY, startPose.getRotation()); */
 
-    //TODO take following line out
-    startPose = new Pose2d(0.01, 0.01, Rotation2d.fromDegrees(1));
-
-    var interiorWaypoints = new ArrayList<Translation2d>();
-    interiorWaypoints.add(new Translation2d(1, 1));
-    
-    System.out.println("startPose " + startPose.toString());
-
-    var trajectory = TrajectoryGenerator.generateTrajectory(
-      startPose,
-      interiorWaypoints,
-      endPose,
-      config);
     
     var thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
@@ -403,5 +425,9 @@ public class RobotContainer {
     //-TO-DO- load this when code starts not when this called here //I think this should be fine because its like the coconuts last year
     //return new PathPlannerAuto("Test Auto");
     return autoChooser.getSelected();
+  }
+
+  public double inToMeter(double measurement){
+    return measurement * 0.0254;
   }
 }

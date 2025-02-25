@@ -99,8 +99,7 @@ public class DriveSubsystem extends SubsystemBase {
   Pose2d testPose2d = new Pose2d(0,0, Rotation2d.fromDegrees(0));
 
   boolean visionEstIsPresent = false;
-  var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
-
+  
   private final Vision piCam = new Vision();
 
   // The robot pose estimator for tracking swerve odometry and applying vision corrections.
@@ -113,6 +112,10 @@ public class DriveSubsystem extends SubsystemBase {
     setEncoder();
 
     time = new Timer();
+    // Standard deviations for odometry: X, Y, rotation
+    var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+    //Starting standard deviations for vision: X, Y, rotation
+    var visionStdDevs = VecBuilder.fill(1, 1, 1);
 
     poseEstimator =
                 new SwerveDrivePoseEstimator(
@@ -124,8 +127,8 @@ public class DriveSubsystem extends SubsystemBase {
                           m_rearLeft.getPosition(),
                           m_rearRight.getPosition()},
                         new Pose2d(),
-                        stateStDevs,
-                        piCam.getEstimationStdDevs());
+                        stateStdDevs,
+                        visionStdDevs);
 
     //AutoBuider Config for PathPlanner
     RobotConfig config;
@@ -254,7 +257,6 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    System.out.println("look! "+ poseEstimator.getEstimatedPosition());
     return poseEstimator.getEstimatedPosition();
   }
 
@@ -317,8 +319,8 @@ public class DriveSubsystem extends SubsystemBase {
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    System.out.println("zero"+ swerveModuleStates[0].toString());
-    System.out.println("one"+ swerveModuleStates[1].toString());
+    //System.out.println("zero"+ swerveModuleStates[0].toString());
+    //System.out.println("one"+ swerveModuleStates[1].toString());
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
@@ -342,8 +344,8 @@ public class DriveSubsystem extends SubsystemBase {
         new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    System.out.println("zero"+ swerveModuleStates[0].toString());
-    System.out.println("one"+ swerveModuleStates[1].toString());
+    //System.out.println("zero"+ swerveModuleStates[0].toString());
+    //System.out.println("one"+ swerveModuleStates[1].toString());
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
@@ -368,10 +370,10 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    */
   public void turnDrive(double xSpeed, double ySpeed, double desiredAngle, boolean fieldRelative) {
-    System.out.println(xSpeed);
+  /*   System.out.println(xSpeed);
     System.out.println(ySpeed);
     System.out.println(desiredAngle);
-    System.out.println(fieldRelative);
+    System.out.println(fieldRelative); */
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
@@ -393,8 +395,8 @@ public class DriveSubsystem extends SubsystemBase {
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    System.out.println("zero"+ swerveModuleStates[0].toString());
-    System.out.println("one"+ swerveModuleStates[1].toString());
+    /* System.out.println("zero"+ swerveModuleStates[0].toString());
+    System.out.println("one"+ swerveModuleStates[1].toString()); */
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
@@ -413,10 +415,10 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void lineUpDrive(double targetArea, double ySpeed, double rot, boolean fieldRelative, double desiredArea){
-    System.out.println(targetArea);
+    /* System.out.println(targetArea);
     System.out.println(ySpeed);
     System.out.println(rot);
-    System.out.println(fieldRelative);
+    System.out.println(fieldRelative); */
 
 //-MathUtil.applyDeadband(piCam.targetRange, OIConstants.kDriveDeadband)
 //                -MathUtil.applyDeadband(piCam.targetYaw(), OIConstants.kDriveDeadband),
@@ -426,7 +428,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("vision rotDelivered", rotDelivered);
     //double xSpeedDelivered = (desiredDistance - targetRange) * VisionConstants.strafeP * DriveConstants.kMaxSpeedMetersPerSecond;
     double xSpeedDelivered = (desiredArea-targetArea) * -0.1;
-    System.out.println("xspeedDelivered" + xSpeedDelivered);
+    //System.out.println("xspeedDelivered" + xSpeedDelivered);
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
 
     rotDelivered = 0.25 * rotDelivered;
@@ -441,8 +443,8 @@ public class DriveSubsystem extends SubsystemBase {
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    System.out.println("zero"+ swerveModuleStates[0].toString());
-    System.out.println("one"+ swerveModuleStates[1].toString());
+    /* System.out.println("zero"+ swerveModuleStates[0].toString());
+    System.out.println("one"+ swerveModuleStates[1].toString()); */
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
@@ -577,4 +579,7 @@ public class DriveSubsystem extends SubsystemBase {
     return mySwerveControllerCommand.andThen(() -> drive(0, 0, 0, false));
  
   } */
+  public double inToMeter(double measurement){
+    return measurement * 0.0254;
+  }
 }

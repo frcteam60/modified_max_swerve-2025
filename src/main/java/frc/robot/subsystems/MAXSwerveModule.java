@@ -72,7 +72,7 @@ public class MAXSwerveModule {
   public void setEncoder(double offset){
     //Sets the relative turning encoder by the absolute encoder
     m_turningEncoder.setPosition(Math.toRadians(m_absoluteEncoder.get() * 360) - offset);
-    System.out.println(m_turningEncoder.getPosition());
+    //System.out.println(m_turningEncoder.getPosition());
     
   }
   /**
@@ -120,7 +120,7 @@ public class MAXSwerveModule {
 
     m_desiredState = desiredState;
 
-    System.out.println(ID + getState().toString());
+    //System.out.println(ID + getState().toString());
   }
 
   /** Zeroes all the SwerveModule encoders. */

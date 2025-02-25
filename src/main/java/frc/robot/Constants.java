@@ -33,6 +33,10 @@ import com.pathplanner.lib.config.RobotConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class RobotConstants {
+    public static final double robotWidthWithBumpers = 0.0254; // 36in   
+    
+  }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
