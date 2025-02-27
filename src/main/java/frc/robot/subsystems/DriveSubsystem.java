@@ -67,25 +67,25 @@ public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
-      DriveConstants.kFrontLeftTurningCanId,
+      DriveConstants.kFrontLeftSteeringCanId,
       DriveConstants.kFrontLeftEncoderNum,
       DriveConstants.kFrontLeftChassisAngularOffset);
 
   private final MAXSwerveModule m_frontRight = new MAXSwerveModule(
       DriveConstants.kFrontRightDrivingCanId,
-      DriveConstants.kFrontRightTurningCanId,
+      DriveConstants.kFrontRightSteeringCanId,
       DriveConstants.kFrontRightEncoderNum,
       DriveConstants.kFrontRightChassisAngularOffset);
 
   private final MAXSwerveModule m_rearLeft = new MAXSwerveModule(
       DriveConstants.kRearLeftDrivingCanId,
-      DriveConstants.kRearLeftTurningCanId,
+      DriveConstants.kRearLeftSteeringCanId,
       DriveConstants.kRearLeftEncoderNum,
       DriveConstants.kBackLeftChassisAngularOffset);
 
   private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
       DriveConstants.kRearRightDrivingCanId,
-      DriveConstants.kRearRightTurningCanId,
+      DriveConstants.kRearRightSteeringCanId,
       DriveConstants.kRearRightEncoderNum,
       DriveConstants.kBackRightChassisAngularOffset);
 
