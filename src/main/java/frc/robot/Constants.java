@@ -84,9 +84,9 @@ public final class Constants {
 
 
     //Absolute Encoder Port
-    public static final int kFrontLeftEncoderNum = 3;
+    public static final int kFrontLeftEncoderNum = 2;
     public static final int kRearLeftEncoderNum = 0;
-    public static final int kFrontRightEncoderNum = 2;
+    public static final int kFrontRightEncoderNum = 3;
     public static final int kRearRightEncoderNum = 1;
 
     //Absolute Encoder offsets
