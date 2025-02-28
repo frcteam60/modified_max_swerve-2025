@@ -62,6 +62,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_autonomousCommand = m_robotContainer.getSecondAutoCommand();
+    m_robotContainer.setUp();
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -89,6 +90,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.setUp();
   }
 
   /** This function is called periodically during operator control. */

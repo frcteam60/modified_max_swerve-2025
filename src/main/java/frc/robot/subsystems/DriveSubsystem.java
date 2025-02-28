@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -41,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj.Timer;
+import java.util.Optional;
 
 import java.lang.invoke.VolatileCallSite;
 import java.security.PublicKey;
@@ -99,6 +101,9 @@ public class DriveSubsystem extends SubsystemBase {
   Pose2d testPose2d = new Pose2d(0,0, Rotation2d.fromDegrees(0));
 
   boolean visionEstIsPresent = false;
+
+  boolean blue = true;
+  boolean allianceYet = false;
   
   private final Vision piCam = new Vision();
 
@@ -150,6 +155,7 @@ public class DriveSubsystem extends SubsystemBase {
           // This will flip the path being followed to the red side of the field.
           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
           //TODO field side probally needs to be in auto init instead not when we turn on?
+          //TODO should this even flip on red?
           var alliance = DriverStation.getAlliance();
           if (alliance.isPresent()) {
             return alliance.get() == DriverStation.Alliance.Red;
@@ -165,7 +171,20 @@ public class DriveSubsystem extends SubsystemBase {
       
     }
     
-    
+    Optional<Alliance> ally = DriverStation.getAlliance();
+      if (ally.isPresent()) {
+        if (ally.get() == Alliance.Red) {
+          blue = false;
+          allianceYet = true;
+        }
+        if (ally.get() == Alliance.Blue) {
+          blue = true;
+          allianceYet = true;
+        }
+      } else {
+        blue = true;
+        allianceYet = false;
+      }
 
   }
 
@@ -221,6 +240,23 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("PoseEstimator_X", poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("PoseEstimator_Y", poseEstimator.getEstimatedPosition().getY());
     
+  }
+
+  public void checkAllianceColor(){
+    Optional<Alliance> ally = DriverStation.getAlliance();
+      if (ally.isPresent()) {
+        if (ally.get() == Alliance.Red) {
+          blue = false;
+          allianceYet = true;
+        }
+        if (ally.get() == Alliance.Blue) {
+          blue = true;
+          allianceYet = true;
+        }
+      } else {
+        blue = true;
+        allianceYet = false;
+      }
   }
 
   public boolean isVisionEstPresent(){
@@ -292,6 +328,15 @@ public class DriveSubsystem extends SubsystemBase {
         pose);
   }
 
+  public void humanDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative){
+    if(blue){
+      drive(xSpeed, ySpeed, rot, fieldRelative);
+    } else {
+      drive(-xSpeed, -ySpeed, rot, fieldRelative);
+    }
+  
+  }
+
   /**
    * Method to drive the robot using joystick info.
    *
@@ -327,6 +372,18 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
+  public void driveToPosition(Pose2d positionWanted){
+    double desiredXSpeed = positionWanted.getX() - getPose().getX();
+    double desiredYSpeed = positionWanted.getY() - getPose().getY();
+    double desiredRotSpeed = positionWanted.getRotation().getDegrees() - getPose().getRotation().getDegrees();
+
+    desiredXSpeed = desiredXSpeed * 5;
+    desiredYSpeed = desiredYSpeed * 5;
+    desiredRotSpeed = desiredRotSpeed * 2.5;
+
+     drive(desiredXSpeed, desiredYSpeed, desiredRotSpeed, true);
+  }
+
   public void driveRobotRelative(ChassisSpeeds botRelChassisSpeeds){
     //TODO
     // 
@@ -359,17 +416,24 @@ public class DriveSubsystem extends SubsystemBase {
      return result;
 
   }
+  public void humanTurnDrive(double xSpeed, double ySpeed, double desiredAngle, boolean fieldRelative){
+    if(blue){
+      turnDrive(xSpeed, ySpeed, desiredAngle, fieldRelative);
+    } else {
+      turnDrive(-xSpeed, -ySpeed, angleSubtractor(desiredAngle, 180), fieldRelative);
+    }
+  }
 
   /**
    * Method to drive the robot using joystick info.
    *
    * @param xSpeed        Speed of the robot in the x direction (forward).
    * @param ySpeed        Speed of the robot in the y direction (sideways).
-   * @param desiredAngle           Angle of the robot.
+   * @param desiredAngleDeg           Angle of the robot.
    * @param fieldRelative Whether the provided x and y speeds are relative to the
    *                      field.
    */
-  public void turnDrive(double xSpeed, double ySpeed, double desiredAngle, boolean fieldRelative) {
+  public void turnDrive(double xSpeed, double ySpeed, double desiredAngleDeg, boolean fieldRelative) {
   /*   System.out.println(xSpeed);
     System.out.println(ySpeed);
     System.out.println(desiredAngle);
@@ -377,7 +441,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotDelivered = (angleSubtractor(desiredAngle, yaw))* 0.01 * DriveConstants.kMaxAngularSpeed;
+    double rotDelivered = (angleSubtractor(desiredAngleDeg, yaw))* 0.01 * DriveConstants.kMaxAngularSpeed;
 
     /* public void optimize(Rotation2d currentAngle) {
       var delta = angle.minus(currentAngle);
@@ -582,4 +646,6 @@ public class DriveSubsystem extends SubsystemBase {
   public double inToMeter(double measurement){
     return measurement * 0.0254;
   }
+
+
 }

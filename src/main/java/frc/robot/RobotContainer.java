@@ -79,7 +79,7 @@ public class RobotContainer {
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
-            () -> m_robotDrive.drive(
+            () -> m_robotDrive.humanDrive(
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
@@ -107,6 +107,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+    // put wheels in X
     new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
@@ -127,33 +128,38 @@ public class RobotContainer {
         //.whileTrue(goTo(new Pose2d(3.66-(RobotConstants.robotWidthWithBumpers/2) + inToMeter(12), 4.03, Rotation2d.fromDegrees(0))));
         .whileTrue(goTo(m_robotDrive.getPose(), new Pose2d(3.66 , 4.03, Rotation2d.fromDegrees(0))));
 
+    new JoystickButton(m_driverController, Button.kA.value)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.driveToPosition(new Pose2d(0, 0, Rotation2d.fromDegrees(0))), 
+          m_robotDrive));
+    //North
     new POVButton(m_driverController, 0)
         .whileTrue(new RunCommand(
-          () -> m_robotDrive.turnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
+          () -> m_robotDrive.humanTurnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
           -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
           0, 
           true), 
           m_robotDrive));
-
+    //West
     new POVButton(m_driverController, 270)
         .whileTrue(new RunCommand(
-          () -> m_robotDrive.turnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
+          () -> m_robotDrive.humanTurnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
           -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
           90, 
           true), 
           m_robotDrive));
-
+    //East
     new POVButton(m_driverController, 90)
         .whileTrue(new RunCommand(
-          () -> m_robotDrive.turnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
+          () -> m_robotDrive.humanTurnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
           -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
           270, 
           true), 
           m_robotDrive));
-
+    //South
     new POVButton(m_driverController, 180)
           .whileTrue(new RunCommand(
-            () -> m_robotDrive.turnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
+            () -> m_robotDrive.humanTurnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
             -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
             180, 
             true), 
@@ -429,5 +435,10 @@ public class RobotContainer {
 
   public double inToMeter(double measurement){
     return measurement * 0.0254;
+  }
+
+  public void setUp(){
+    m_robotDrive.checkAllianceColor();
+    m_robotDrive.setEncoder();
   }
 }
