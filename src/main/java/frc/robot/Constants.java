@@ -37,6 +37,12 @@ public final class Constants {
     public static final double robotWidthWithBumpers = 0.0254; // 36in   
     
   }
+
+  public static final class ElevatorConstants{
+    // elevator front one 18
+    // rear two 19
+    //public static final int
+  }
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
@@ -69,24 +75,24 @@ public final class Constants {
     public static final double kBackRightChassisAngularOffset = Math.PI;
 
     // SPARK MAX CAN IDs
-    public static final int kFrontLeftDrivingCanId = 18;
-    public static final int kRearLeftDrivingCanId = 30;
-    public static final int kFrontRightDrivingCanId = 17;
-    public static final int kRearRightDrivingCanId = 2;
+    public static final int kFrontLeftDrivingCanId = 7;
+    public static final int kRearLeftDrivingCanId = 1;
+    public static final int kFrontRightDrivingCanId = 5;
+    public static final int kRearRightDrivingCanId = 3;
 
-    public static final int kFrontLeftSteeringCanId = 19;
-    public static final int kRearLeftSteeringCanId = 10;
-    public static final int kFrontRightSteeringCanId = 16;
-    public static final int kRearRightSteeringCanId = 3;
+    public static final int kFrontLeftSteeringCanId = 8;
+    public static final int kRearLeftSteeringCanId = 2;
+    public static final int kFrontRightSteeringCanId = 6;
+    public static final int kRearRightSteeringCanId = 4;
 
     //public static final boolean kGyroReversed = false;
     public static final boolean kGyroReversed = false;
 
 
     //Absolute Encoder Port
-    public static final int kFrontLeftEncoderNum = 2;
+    public static final int kFrontLeftEncoderNum = 3;
     public static final int kRearLeftEncoderNum = 0;
-    public static final int kFrontRightEncoderNum = 3;
+    public static final int kFrontRightEncoderNum = 2;
     public static final int kRearRightEncoderNum = 1;
 
     //Absolute Encoder offsets

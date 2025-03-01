@@ -49,8 +49,6 @@ import java.security.PublicKey;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.opencv.core.Mat;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -67,7 +65,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Consumer;
 
-public class DriveSubsystem extends SubsystemBase {
+public class Elevator extends SubsystemBase {
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -113,7 +111,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final SwerveDrivePoseEstimator poseEstimator;
 
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() {
+  public Elevator() {
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
     setEncoder();
@@ -377,24 +375,12 @@ public class DriveSubsystem extends SubsystemBase {
   public void driveToPosition(Pose2d positionWanted){
     double desiredXSpeed = positionWanted.getX() - getPose().getX();
     double desiredYSpeed = positionWanted.getY() - getPose().getY();
-    double desiredRotSpeed = angleSubtractor(positionWanted.getRotation().getDegrees(), getPose().getRotation().getDegrees());
-    
-    //if we are within an inch of our desired position our desired speed is zero
-    if(Math.abs(Math.sqrt((desiredXSpeed*desiredXSpeed)+(desiredYSpeed*desiredYSpeed))) < 0.0254){
-      desiredXSpeed = 0;
-      desiredYSpeed = 0;    
-    } else {
-      desiredXSpeed = desiredXSpeed * 2.5;
-      desiredYSpeed = desiredYSpeed * 2.5;
-      //5,5,2.5
-    }
+    double desiredRotSpeed = positionWanted.getRotation().getDegrees() - getPose().getRotation().getDegrees();
 
-    if(Math.abs(desiredRotSpeed) < 3){
-      desiredRotSpeed = 0;
-    } else {
-      desiredRotSpeed = desiredRotSpeed * 1;
-    }
-    
+    desiredXSpeed = desiredXSpeed * 5;
+    desiredYSpeed = desiredYSpeed * 5;
+    desiredRotSpeed = desiredRotSpeed * 2.5;
+
      drive(desiredXSpeed, desiredYSpeed, desiredRotSpeed, true);
   }
 
