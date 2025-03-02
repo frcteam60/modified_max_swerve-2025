@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -102,6 +101,13 @@ public class DriveSubsystem extends SubsystemBase {
   double yawOffset = 0;
   Pose2d testPose2d = new Pose2d(0,0, Rotation2d.fromDegrees(0));
 
+  double accelerationX = 0;
+  double accelerationY = 0;
+  double accelerationRot = 0;
+
+  ChassisSpeeds lastChassisSpeeds = new ChassisSpeeds();
+  double lastTime = 0;
+
   boolean visionEstIsPresent = false;
 
   boolean blue = true;
@@ -120,7 +126,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     time = new Timer();
     // Standard deviations for odometry: X, Y, rotation
-    var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+    //var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+    var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.05);
     //Starting standard deviations for vision: X, Y, rotation
     var visionStdDevs = VecBuilder.fill(1, 1, 1);
 
@@ -194,6 +201,10 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
     yaw = gyro.getYaw()*-1;
+
+    displayAbsValues();
+
+    calculateRobotAcceleration();
     //Displays module angle in radians
     SmartDashboard.putNumber("FL Encoder Relative", m_frontLeft.returnModuleAngle());
     SmartDashboard.putNumber("BL Encoder Relative", m_rearLeft.returnModuleAngle());
@@ -274,6 +285,18 @@ public class DriveSubsystem extends SubsystemBase {
     
   }
 
+  public void calculateRobotAcceleration(){
+    double currentTime = time.get();
+    ChassisSpeeds currentChassisSpeeds = getRobotRelativeSpeeds();
+    ChassisSpeeds difInSpeed = currentChassisSpeeds.minus(lastChassisSpeeds);
+    accelerationX = difInSpeed.vxMetersPerSecond/(currentTime-lastTime);
+    accelerationY = difInSpeed.vyMetersPerSecond/(currentTime-lastTime);
+    accelerationRot = difInSpeed.omegaRadiansPerSecond/(currentTime-lastTime);
+    
+    lastChassisSpeeds = getRobotRelativeSpeeds();
+    lastTime =currentTime;
+  }
+
   public void voltageDrive(Voltage volts){
     m_frontLeft.voltageControl(volts);
     m_frontRight.voltageControl(volts);
@@ -331,11 +354,11 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void humanDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative){
-    if(blue){
-      drive(xSpeed, ySpeed, rot, fieldRelative);
-    } else {
-      drive(-xSpeed, -ySpeed, rot, fieldRelative);
-    }
+    drive(
+      applySensitivity(xSpeed, Constants.posJoystickSensitivity), 
+      applySensitivity(ySpeed, Constants.posJoystickSensitivity), 
+      applySensitivity(rot, Constants.rotJoystickSensitivity), 
+      fieldRelative);
   
   }
 
@@ -384,18 +407,21 @@ public class DriveSubsystem extends SubsystemBase {
       desiredXSpeed = 0;
       desiredYSpeed = 0;    
     } else {
-      desiredXSpeed = desiredXSpeed * 2.5;
-      desiredYSpeed = desiredYSpeed * 2.5;
+      desiredXSpeed = desiredXSpeed * 0.5;
+      desiredYSpeed = desiredYSpeed * 0.5;
       //5,5,2.5
     }
 
     if(Math.abs(desiredRotSpeed) < 3){
       desiredRotSpeed = 0;
     } else {
-      desiredRotSpeed = desiredRotSpeed * 1;
+      desiredRotSpeed = desiredRotSpeed * 0.011;
     }
-    
-     drive(desiredXSpeed, desiredYSpeed, desiredRotSpeed, true);
+    if(blue){
+      drive(desiredXSpeed, desiredYSpeed, desiredRotSpeed, true);
+    } else {
+      drive(-desiredXSpeed, -desiredYSpeed, desiredRotSpeed, true);
+    }
   }
 
   public void driveRobotRelative(ChassisSpeeds botRelChassisSpeeds){
@@ -455,7 +481,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotDelivered = (angleSubtractor(desiredAngleDeg, yaw))* 0.01 * DriveConstants.kMaxAngularSpeed;
+    double rotDelivered = (angleSubtractor(desiredAngleDeg, getOdomHeading().getDegrees()))* 0.01 * DriveConstants.kMaxAngularSpeed;
 
     /* public void optimize(Rotation2d currentAngle) {
       var delta = angle.minus(currentAngle);
@@ -569,6 +595,10 @@ public class DriveSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(yaw).getDegrees();
   }
 
+  public Rotation2d getOdomHeading(){
+    return getPose().getRotation();
+  }
+
   /**
    * Returns the turn rate of the robot.
    *
@@ -661,5 +691,21 @@ public class DriveSubsystem extends SubsystemBase {
     return measurement * 0.0254;
   }
 
+  /**
+   * Method to drive the robot using joystick info.
+   *
+   * @param orignalValue        Value we are applying sensitivity to.
+   * @param sensitivity        Higher values make this more sensitive at lower speeds.
+   *
+   */
+  double applySensitivity(double orignalValue, double sensitivity){
+    //absolute value of value raised to 1/sensitivity, then sign reaplied
+    double newValue = Math.abs(orignalValue);
+    newValue = Math.pow(newValue, sensitivity);
+    newValue = Math.copySign(newValue, orignalValue);
+    System.out.println(orignalValue + "orignal value");
+    System.out.println(newValue + "newValue");
+    return newValue;
+  }
 
 }

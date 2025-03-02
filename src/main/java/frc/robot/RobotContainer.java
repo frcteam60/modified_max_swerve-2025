@@ -126,7 +126,8 @@ public class RobotContainer {
     // Line up 12in before tag 18
     new JoystickButton(m_driverController, Button.kLeftBumper.value)
         //.whileTrue(goTo(new Pose2d(3.66-(RobotConstants.robotWidthWithBumpers/2) + inToMeter(12), 4.03, Rotation2d.fromDegrees(0))));
-        .whileTrue(goTo(m_robotDrive.getPose(), new Pose2d(3.66 , 4.03, Rotation2d.fromDegrees(0))));
+        .whileTrue(new RunCommand( 
+          () -> m_robotDrive.driveToPosition(new Pose2d(3.3552, 4.03, Rotation2d.fromDegrees(0))), m_robotDrive));
 
     new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(new RunCommand(
@@ -279,7 +280,7 @@ public class RobotContainer {
   /* public Command goToReef(){
 
   } */
-  public Command goTo(Pose2d startPose, Pose2d desiredPose){
+  /* public Command goTo(Pose2d startPose, Pose2d desiredPose){
     System.out.println("This is in goTo");
     //double startPoseX;
     //double startPoseY;
@@ -317,23 +318,6 @@ public class RobotContainer {
       desiredPose,
       config);
     
-  /*      
-    //If x or y are 0 or 0.001 change to 0.01
-    if(Math.abs(startPose.getX()) < 0.01){
-      startPoseX = 0.01; 
-    } else {
-      startPoseX = startPose.getX();
-    };
-
-    if(Math.abs(startPose.getY()) < 0.01){
-      startPoseY = 0.01; 
-    } else {
-      startPoseY = startPose.getY();
-    };
-
-    startPose = new Pose2d(startPoseX, startPoseY, startPose.getRotation()); */
-
-    
     var thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -358,7 +342,7 @@ public class RobotContainer {
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
 
   }
-
+ */
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -427,7 +411,7 @@ public class RobotContainer {
     return mySwerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
   }
 
-  public Command  getSecondAutoCommand(){
+  public Command getSecondAutoCommand(){
     //-TO-DO- load this when code starts not when this called here //I think this should be fine because its like the coconuts last year
     //return new PathPlannerAuto("Test Auto");
     return autoChooser.getSelected();
@@ -440,5 +424,15 @@ public class RobotContainer {
   public void setUp(){
     m_robotDrive.checkAllianceColor();
     m_robotDrive.setEncoder();
+  }
+
+  double applySensitivity(double orignalValue, double sensitivity){
+    //absolute value of value raised to 1/sensitivity, then sign reaplied
+    double newValue = Math.abs(orignalValue);
+    newValue = Math.pow(newValue, sensitivity/1);
+    newValue = Math.copySign(newValue, orignalValue);
+    //System.out.println(orignalValue + "orignal value");
+    //System.out.println(newValue + "newValue");
+    return newValue;
   }
 }

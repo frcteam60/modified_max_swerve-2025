@@ -33,12 +33,16 @@ import com.pathplanner.lib.config.RobotConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double posJoystickSensitivity = 2;
+  public static final double rotJoystickSensitivity = 2;
   public static final class RobotConstants {
     public static final double robotWidthWithBumpers = 0.0254; // 36in   
     
   }
 
   public static final class ElevatorConstants{
+    public static final int elevatorOneCANID = 18;
+    public static final int elevatorTwoCANID = 1;
     // elevator front one 18
     // rear two 19
     //public static final int
@@ -97,10 +101,14 @@ public final class Constants {
 
     //Absolute Encoder offsets
     //Our relative encoders output radians after we apply the conversion factor
-    public static final double kFrontLeftAbsOffset = Math.toRadians(0.009997 * 360);
+    /* public static final double kFrontLeftAbsOffset = Math.toRadians(0.009997 * 360);
     public static final double kRearLeftAbsOffset = Math.toRadians(0.771441 * 360);
     public static final double kFrontRightAbsOffset = Math.toRadians(0.110444 * 360);
-    public static final double kRearRightAbsOffset = Math.toRadians(0.238739 * 360);
+    public static final double kRearRightAbsOffset = Math.toRadians(0.238739 * 360); */
+    public static final double kFrontLeftAbsOffset = Math.toRadians(0.00 * 360);
+    public static final double kRearLeftAbsOffset = Math.toRadians(0.67 * 360);
+    public static final double kFrontRightAbsOffset = Math.toRadians(0.901 * 360);
+    public static final double kRearRightAbsOffset = Math.toRadians(0.34 * 360);
   }
 
   public static final class ModuleConstants {
