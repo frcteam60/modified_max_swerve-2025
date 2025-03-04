@@ -58,8 +58,6 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
-  //TODO add back in
-  private final Vision piCam = new Vision();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -72,7 +70,6 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    piCam.getEstimatedGlobalPose();
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -108,12 +105,14 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // put wheels in X
-    new JoystickButton(m_driverController, Button.kRightBumper.value)
+    //X Button
+    new JoystickButton(m_driverController, Button.kX.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
     // resets Odom to 1, 1, 0
+    //Y Button
     new JoystickButton(m_driverController, Button.kY.value)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.resetOdometry(new Pose2d(1, 1, Rotation2d.fromDegrees(0))), m_robotDrive));
@@ -124,15 +123,20 @@ public class RobotContainer {
         .whileTrue(new RunCommand(goTo(null, null), null)); */
 
     // Line up 12in before tag 18
-    new JoystickButton(m_driverController, Button.kLeftBumper.value)
+    //B Button
+    new JoystickButton(m_driverController, Button.kB.value)
         //.whileTrue(goTo(new Pose2d(3.66-(RobotConstants.robotWidthWithBumpers/2) + inToMeter(12), 4.03, Rotation2d.fromDegrees(0))));
         .whileTrue(new RunCommand( 
           () -> m_robotDrive.driveToPosition(new Pose2d(3.3552, 4.03, Rotation2d.fromDegrees(0))), m_robotDrive));
 
+    //Goes to zero-zero-zero
+    //Button A
     new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.driveToPosition(new Pose2d(0, 0, Rotation2d.fromDegrees(0))), 
           m_robotDrive));
+
+
     //North
     new POVButton(m_driverController, 0)
         .whileTrue(new RunCommand(
@@ -166,183 +170,19 @@ public class RobotContainer {
             true), 
             m_robotDrive));
 
-    //TODO add back in
-    /* new JoystickButton(m_driverController, Button.kL1.value)
-      .whileTrue(new RunCommand(
-        () -> m_robotDrive.lineUpDrive(
-          piCam.targetArea,
-          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-          piCam.targetYaw(),
-          false,
-          9//18
-        ), 
-        m_robotDrive));  */
+    
   }
   //Method for displaying abs encoder values for finding offset
   public void displayAbsoluteAngle(){
     m_robotDrive.displayAbsValues();
   }
 
-  public Command lineUp18(){
-    double startPoseX;
-    double startPoseY;
-    //TODO only when vision is reliable
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
-    
-    /* // A trajectory to follow. All units in meters.
-    Trajectory to18Trajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        /* m_robotDrive.isVisionEstPresent() 
-          ? m_robotDrive.returnVisionEst()
-          : m_robotDrive.getPose() //comment out ends here //TODO
-        m_robotDrive.getPose(),
-        // Pass through these two interior waypoints, making an 's' curve path
-        //List.of(new Translation2d(m_robotDrive.getPose().getX(), m_robotDrive.getPose().getY())),
-        List.of(m_robotDrive.getPose().getTranslation()),
-
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(2.66, 4.03, new Rotation2d(0)),
-        config); */
-    
-    // 2018 cross scale auto waypoints.
-    var sideStart = new Pose2d(Units.feetToMeters(1.54), Units.feetToMeters(23.23),
-        Rotation2d.fromDegrees(-180));
-    var crossScale = new Pose2d(Units.feetToMeters(23.7), Units.feetToMeters(6.8),
-        Rotation2d.fromDegrees(-160));
-
-    System.out.println(m_robotDrive.isVisionEstPresent() 
-        ? m_robotDrive.returnVisionEst().getTranslation()
-        : m_robotDrive.getPose().getTranslation() + "see it prints");
-    
-    var interiorWaypoints = new ArrayList<Translation2d>();
-    interiorWaypoints.add(m_robotDrive.isVisionEstPresent() 
-      ? m_robotDrive.returnVisionEst().getTranslation()
-      : m_robotDrive.getPose().getTranslation());
-    
-    var startPose = m_robotDrive.isVisionEstPresent() 
-    ? m_robotDrive.returnVisionEst()
-    : m_robotDrive.getPose();    
-    
   
-    //If x or y are 0 or 0.001 change to 0.01
-    if(Math.abs(startPose.getX()) < 0.01){
-      startPoseX = 0.01; 
-    } else {
-      startPoseX = startPose.getX();
-    };
-
-    if(Math.abs(startPose.getY()) < 0.01){
-      startPoseY = 0.01; 
-    } else {
-      startPoseY = startPose.getY();
-    };
-
-    startPose = new Pose2d(startPoseX, startPoseY, startPose.getRotation());
-    
-    System.out.println("startPose " + startPose.toString());
-
-    var trajectory = TrajectoryGenerator.generateTrajectory(
-      startPose,
-      interiorWaypoints,
-      crossScale,
-      config);
-    
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        trajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
-
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(trajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-
-  }
 
   /* public Command goToReef(){
 
   } */
-  /* public Command goTo(Pose2d startPose, Pose2d desiredPose){
-    System.out.println("This is in goTo");
-    //double startPoseX;
-    //double startPoseY;
-    
-    //TODO only when vision is reliable
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
-
-    // sets our start pose as our current pose
-    //var startPose = m_robotDrive.getPose(); 
-    SmartDashboard.putString("startPose", startPose.toString());
-    System.out.println("startPose");
-
-    // add start and end translations
-    Translation2d midPoint = startPose.getTranslation().plus(desiredPose.getTranslation());
-    
-    // divides by 2 to get the average or the midpoint between the two points
-    midPoint = midPoint.div(2);
-    SmartDashboard.putString("midpoint", midPoint.toString());
-    System.out.println("midpoint");
-    SmartDashboard.putString("desiredPose", desiredPose.toString());
-    System.out.println("desiredPose");
-    var interiorWaypoints = new ArrayList<Translation2d>();
-    interiorWaypoints.add(midPoint);
-    
-    System.out.println("startPose " + startPose.toString());
-
-    var trajectory = TrajectoryGenerator.generateTrajectory(
-      startPose,
-      interiorWaypoints,
-      desiredPose,
-      config);
-    
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        trajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
-
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(trajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-
-  }
- */
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

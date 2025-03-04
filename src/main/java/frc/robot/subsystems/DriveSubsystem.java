@@ -397,6 +397,48 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
+  public boolean driveToReef(){
+    //find closest reef april tag
+    // line up with left or right position
+    double closestTarget;
+    Pose2d currentPose = getPose();
+    double distanceToSix = getDistanceBetween(currentPose, );
+    double distanceToSeven
+    double distanceToEight
+    double distanceToNine
+    double distanceToTen
+    double distanceToEleven
+    
+
+    Pose2d desiredPosition = new Pose2d();
+    double xError = getPose().minus(desiredPosition).getX();
+    double yError = getPose().minus(desiredPosition).getY();
+    boolean linedUp = false;
+
+    if(blue){
+      getDistanceBetween(getPose(), desiredPosition);
+    } else {
+      //6, 7, 8, 9, 10 ,11
+    }
+
+
+    /* if(blue){
+      if(piCam.targetVisible){
+        targets = piCam.returnTargets();
+
+      }
+      
+
+    } else {
+
+    }
+    if(Math.abs(Math.sqrt((xError*xError)+(yError*yError))) < 0.0254){
+      linedUp = true;
+    } */
+
+    return linedUp;
+  }
+
   public void driveToPosition(Pose2d positionWanted){
     double desiredXSpeed = positionWanted.getX() - getPose().getX();
     double desiredYSpeed = positionWanted.getY() - getPose().getY();
@@ -628,65 +670,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("BR Encoder abs", m_rearRight.returnAbsAngle());
   }
 
-/*   //look into Command file for this
-  public void lineUpWith18(){
-    //TODO may need to tune auto loops
 
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
-
-    // A trajectory to follow. All units in meters.
-    Trajectory to18Trajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        getPose(),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(getPose().getX(), getPose().getY())),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        config);
-
-
-    
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        to18Trajectory,
-        getPose(), // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
-
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-       etModuleStates,
-        this);
-
-    SwerveControllerCommand mySwerveControllerCommand = new SwerveControllerCommand(
-        testTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
-    
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    resetOdometry(to18Trajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    //return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
-    return mySwerveControllerCommand.andThen(() -> drive(0, 0, 0, false));
- 
-  } */
   public double inToMeter(double measurement){
     return measurement * 0.0254;
   }
@@ -706,6 +690,13 @@ public class DriveSubsystem extends SubsystemBase {
     System.out.println(orignalValue + "orignal value");
     System.out.println(newValue + "newValue");
     return newValue;
+  }
+
+  public double getDistanceBetween(Pose2d firstPosition, Pose2d secondPosition){
+    double xDifference = firstPosition.getX()-secondPosition.getX();
+    double yDiffference = firstPosition.getY()-secondPosition.getY();
+    return Math.abs(Math.sqrt((xDifference*xDifference)+(yDiffference*yDiffference)));
+
   }
 
 }

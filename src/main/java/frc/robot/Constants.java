@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -105,7 +107,7 @@ public final class Constants {
     public static final double kRearLeftAbsOffset = Math.toRadians(0.771441 * 360);
     public static final double kFrontRightAbsOffset = Math.toRadians(0.110444 * 360);
     public static final double kRearRightAbsOffset = Math.toRadians(0.238739 * 360); */
-    public static final double kFrontLeftAbsOffset = Math.toRadians(0.00 * 360);
+    public static final double kFrontLeftAbsOffset = Math.toRadians(0.473 * 360);
     public static final double kRearLeftAbsOffset = Math.toRadians(0.67 * 360);
     public static final double kFrontRightAbsOffset = Math.toRadians(0.901 * 360);
     public static final double kRearRightAbsOffset = Math.toRadians(0.34 * 360);
@@ -183,5 +185,11 @@ public final class Constants {
         public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
         public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   
-    }
+  }
+
+  public static class FieldPositions {
+    Pose2d tag1 = new Pose2d(16.697198, 0.65532, 126);
+  
+    
+  }
 }

@@ -103,6 +103,8 @@ public class Vision extends SubsystemBase {
   public double targetArea = 0;
   public boolean targetVisible = false;
 
+  List <PhotonTrackedTarget> tagsSeen;
+
   //TODO Camera position on robot
    
 
@@ -133,6 +135,7 @@ public class Vision extends SubsystemBase {
         // Get the last one in the list.
         var result = results.get(results.size() - 1);
         if (result.hasTargets()) {
+            tagsSeen = result.getTargets();
             // At least one AprilTag was seen by the camera
             for (var target : result.getTargets()) {
                 if (target.getFiducialId() == 8) {
@@ -168,6 +171,7 @@ public class Vision extends SubsystemBase {
           targetYaw = 0;
           targetRange = 0;
           targetArea = 18;
+          targetVisible = false;
         }
     }
     
@@ -268,7 +272,12 @@ public class Vision extends SubsystemBase {
     return targetArea;
   }
 
+  public List<PhotonTrackedTarget> returnTargets(){
+    return tagsSeen;
+  }
 
-
+  public boolean returnHasTarget(){
+    return targetVisible;
+  }
   
 }
