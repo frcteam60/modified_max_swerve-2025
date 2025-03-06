@@ -23,12 +23,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 //import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import frc.robot.Configs.ElevatorConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -57,10 +59,16 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final Elevator lift = new Elevator();
 
 
   // The driver's controller
+  //port zero
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+
+  // The secondary controller
+  //port one
+  XboxController secondXboxController = new XboxController(OIConstants.kSecondControllerPort);
 
   private final SendableChooser<Command> autoChooser;
     
@@ -82,6 +90,12 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
+
+    lift.setDefaultCommand(
+      new RunCommand(
+        () -> lift.runElevator(-secondXboxController.getLeftY()), 
+        lift)
+    );
 
     //TODO register commands also I think ? only if I use other commands?
     // Build an auto chooser. This will use Commands.none() as the default option.

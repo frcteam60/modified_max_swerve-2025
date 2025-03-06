@@ -9,6 +9,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -44,7 +45,7 @@ public final class Constants {
 
   public static final class ElevatorConstants{
     public static final int elevatorOneCANID = 18;
-    public static final int elevatorTwoCANID = 1;
+    public static final int elevatorTwoCANID = 19;
     // elevator front one 18
     // rear two 19
     //public static final int
@@ -134,6 +135,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kSecondControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
   }
 
@@ -188,8 +190,63 @@ public final class Constants {
   }
 
   public static class FieldPositions {
-    Pose2d tag1 = new Pose2d(16.697198, 0.65532, 126);
+    public static final Pose2d tag1 = new Pose2d(16.697198, 0.65532, Rotation2d.fromDegrees(126));
   
-    
+
+    //Red reef AprilTags
+    public static final Pose2d tag6 = new Pose2d(13.474446, 3.306318, Rotation2d.fromDegrees(300));
+    public static final Pose2d tag7 = new Pose2d(13.890498, 4.0259, Rotation2d.fromDegrees(0));
+    public static final Pose2d tag8 = new Pose2d(13.474446, 4.745482, Rotation2d.fromDegrees(60));
+    public static final Pose2d tag9 = new Pose2d(12.643358, 4.745482, Rotation2d.fromDegrees(120));
+    public static final Pose2d tag10 = new Pose2d(12.227306, 4.0259, Rotation2d.fromDegrees(180));
+    public static final Pose2d tag11 = new Pose2d(12.643358, 3.306318, Rotation2d.fromDegrees(240));
+    //Blue reef AprilTags
+    public static final Pose2d tag17 = new Pose2d(4.073906, 3.306318, Rotation2d.fromDegrees(240));
+    public static final Pose2d tag18 = new Pose2d(3.6576, 4.0259, Rotation2d.fromDegrees(180));
+    public static final Pose2d tag19 = new Pose2d(4.073906, 4.745482, Rotation2d.fromDegrees(120));
+    public static final Pose2d tag20 = new Pose2d(4.90474, 4.745482, Rotation2d.fromDegrees(60));
+    public static final Pose2d tag21 = new Pose2d(5.321046, 4.0259, Rotation2d.fromDegrees(0));
+    public static final Pose2d tag22 = new Pose2d(4.90474, 3.306318, Rotation2d.fromDegrees(300));
+
+
+    // TODO add numbers and remember to switch rotation correctly
+    //Left lineup spots
+    //Red reef
+    public static final Pose2d leftTag6 = new Pose2d();
+    public static final Pose2d leftTag7 = new Pose2d();
+    public static final Pose2d leftTag8 = new Pose2d();
+    public static final Pose2d leftTag9 = new Pose2d();
+    public static final Pose2d leftTag10 = new Pose2d();
+    public static final Pose2d leftTag11 = new Pose2d();
+    //Rotation2d.fromDegrees()
+
+    //Left lineup spots
+    //Blue reef
+    public static final Pose2d leftTag17 = new Pose2d();
+    public static final Pose2d leftTag18 = new Pose2d();
+    public static final Pose2d leftTag19 = new Pose2d();
+    public static final Pose2d leftTag20 = new Pose2d();
+    public static final Pose2d leftTag21 = new Pose2d();
+    public static final Pose2d leftTag22 = new Pose2d();
+
+    //Right lineup spots
+    //Red reef
+    public static final Pose2d rightTag6 = new Pose2d();
+    public static final Pose2d rightTag7 = new Pose2d();
+    public static final Pose2d rightTag8 = new Pose2d();
+    public static final Pose2d rightTag9 = new Pose2d();
+    public static final Pose2d rightTag10 = new Pose2d();
+    public static final Pose2d rightTag11 = new Pose2d();
+    //Rotation2d.fromDegrees()
+
+    //Right lineup spots
+    //Blue reef
+    public static final Pose2d rightTag17 = new Pose2d();
+    public static final Pose2d rightTag18 = new Pose2d();
+    public static final Pose2d rightTag19 = new Pose2d();
+    public static final Pose2d rightTag20 = new Pose2d();
+    public static final Pose2d rightTag21 = new Pose2d();
+    public static final Pose2d rightTag22 = new Pose2d();
+
   }
 }

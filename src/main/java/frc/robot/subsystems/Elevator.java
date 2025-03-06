@@ -80,6 +80,28 @@ public class Elevator extends SubsystemBase {
   private final RelativeEncoder elevatorOneEncoder;
   private final RelativeEncoder elevatorTwoEncoder;
 
+
+  //TODO need new limits
+  double lowerLimit = 1;
+  double upperLimit = 19.90485;
+  //9.904806
+  //three something at board height
+  /*
+    0-21.190568 largest range
+    0-19.90485 safe range
+
+   9.404799:
+    upper limit
+    -11.785769:
+    lowerlimit
+
+    -10.500051    biggest lift approx. in above wood
+
+    -6.738101 encoder rotations
+    bottom of elevator 12 1/4 in above wood
+    bottom of smaller section 5 5/8 in above wood
+   */
+
   
 
   /** Creates a new DriveSubsystem. */
@@ -103,6 +125,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    showEncoders();
     
 
     
@@ -113,12 +136,29 @@ public class Elevator extends SubsystemBase {
     
   }
 
-
+  public void showEncoders(){
+    SmartDashboard.putNumber("elevatorOne", elevatorOneEncoder.getPosition());
+    SmartDashboard.putNumber("elevatorTwo", elevatorTwoEncoder.getPosition());
+  }
 
 
   public double inToMeter(double measurement){
     return measurement * 0.0254;
   }
 
+  public void runElevator(double speed){
+    if(elevatorOneEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
+      elevatorOneMax.stopMotor();
+      elevatorTwoMax.stopMotor();
+    } else if (elevatorOneEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
+      elevatorOneMax.stopMotor();
+      elevatorTwoMax.stopMotor();
+    } else{
+      elevatorOneMax.set(0.25*speed);
+      elevatorTwoMax.set(0.25*speed);
+    }
+    elevatorOneMax.set(0.25*speed);
+    elevatorTwoMax.set(0.25*speed);
+  }
 
 }

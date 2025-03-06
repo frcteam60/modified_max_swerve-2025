@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.Constants.FieldPositions;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -397,44 +398,139 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
-  public boolean driveToReef(){
+  public boolean driveToReef(boolean left){
     //find closest reef april tag
     // line up with left or right position
     double closestTarget;
     Pose2d currentPose = getPose();
-    double distanceToSix = getDistanceBetween(currentPose, );
-    double distanceToSeven
-    double distanceToEight
-    double distanceToNine
-    double distanceToTen
-    double distanceToEleven
-    
-
-    Pose2d desiredPosition = new Pose2d();
-    double xError = getPose().minus(desiredPosition).getX();
-    double yError = getPose().minus(desiredPosition).getY();
+    double distanceToTarget;
+    Pose2d desiredPosition;
     boolean linedUp = false;
 
     if(blue){
-      getDistanceBetween(getPose(), desiredPosition);
-    } else {
-      //6, 7, 8, 9, 10 ,11
-    }
+      double distanceToSeventeen = getDistanceBetween(currentPose, FieldPositions.tag17);
+      double distanceToEighteen = getDistanceBetween(currentPose, FieldPositions.tag18);
+      double distanceToNineteen = getDistanceBetween(currentPose, FieldPositions.tag19);
+      double distanceToTwenty = getDistanceBetween(currentPose, FieldPositions.tag20);
+      double distanceToTwentyOne = getDistanceBetween(currentPose, FieldPositions.tag21);
+      double distanceToTwentyTwo = getDistanceBetween(currentPose, FieldPositions.tag22);
 
+      distanceToTarget = distanceToSeventeen;
+      if(left){
+        desiredPosition = FieldPositions.leftTag17;
+      } else {
+        desiredPosition = FieldPositions.rightTag17;
+      }
 
-    /* if(blue){
-      if(piCam.targetVisible){
-        targets = piCam.returnTargets();
+      if(distanceToSeventeen > distanceToEighteen){
+        distanceToTarget = distanceToEighteen;
+        if(left){
+          desiredPosition = FieldPositions.leftTag18;
+        } else {
+          desiredPosition = FieldPositions.rightTag18;
+        }
+      }
+
+      if(distanceToTarget > distanceToNineteen){
+        distanceToTarget = distanceToNineteen;
+        if(left){
+          desiredPosition = FieldPositions.leftTag19;
+        } else {
+          desiredPosition = FieldPositions.rightTag19;
+        }
+      }
+
+      if(distanceToTarget > distanceToTwenty){
+        distanceToTarget = distanceToTwenty;
+        if(left){
+          desiredPosition = FieldPositions.leftTag20;
+        } else {
+          desiredPosition = FieldPositions.rightTag20;
+        }
+      }
+
+      if(distanceToTarget > distanceToTwentyOne){
+        distanceToTarget = distanceToTwentyOne;
+        if(left){
+          desiredPosition = FieldPositions.leftTag21;
+        } else {
+          desiredPosition = FieldPositions.rightTag21;
+        }
+      }
+
+      if(distanceToTarget > distanceToTwentyTwo){
+        distanceToTarget = distanceToTwentyTwo;
+        if(left){
+          desiredPosition = FieldPositions.leftTag22;
+        } else {
+          desiredPosition = FieldPositions.rightTag22;
+        }
 
       }
-      
+    } else { //if red
+      //6, 7, 8, 9, 10 ,11
+      double distanceToSix = getDistanceBetween(currentPose, FieldPositions.tag6);
+      double distanceToSeven = getDistanceBetween(currentPose, FieldPositions.tag7);
+      double distanceToEight = getDistanceBetween(currentPose, FieldPositions.tag8);
+      double distanceToNine = getDistanceBetween(currentPose, FieldPositions.tag9);
+      double distanceToTen = getDistanceBetween(currentPose, FieldPositions.tag10);
+      double distanceToEleven = getDistanceBetween(currentPose, FieldPositions.tag11);
 
-    } else {
+      distanceToTarget = distanceToSix;
+      if(left){
+        desiredPosition = FieldPositions.leftTag6;
+      } else {
+        desiredPosition = FieldPositions.rightTag6;
+      }
 
+      if(distanceToSix > distanceToSeven){
+        distanceToTarget = distanceToSeven;
+        if(left){
+          desiredPosition = FieldPositions.leftTag7;
+        } else {
+          desiredPosition = FieldPositions.rightTag7;
+        }        
+      }
+      if(distanceToTarget > distanceToEight){
+        distanceToTarget = distanceToEight;
+        if(left){
+          desiredPosition = FieldPositions.leftTag8;
+        } else {
+          desiredPosition = FieldPositions.rightTag8;
+        }
+      }
+      if(distanceToTarget > distanceToNine){
+        distanceToTarget = distanceToNine;
+        if(left){
+          desiredPosition = FieldPositions.leftTag9;
+        } else {
+          desiredPosition = FieldPositions.rightTag9;
+        }
+      }
+      if(distanceToTarget > distanceToTen){
+        distanceToTarget = distanceToTen;
+        if(left){
+          desiredPosition = FieldPositions.leftTag10;
+        } else {
+          desiredPosition = FieldPositions.rightTag10;
+        }
+      }
+      if(distanceToTarget > distanceToEleven){
+        distanceToTarget = distanceToEleven;
+        if(left){
+          desiredPosition = FieldPositions.leftTag11;
+        } else {
+          desiredPosition = FieldPositions.rightTag11;
+        }
+
+      }
     }
-    if(Math.abs(Math.sqrt((xError*xError)+(yError*yError))) < 0.0254){
+
+    if(getDistanceBetween(currentPose, desiredPosition) < 0.0254){
       linedUp = true;
-    } */
+    } 
+
+    driveToPosition(desiredPosition);
 
     return linedUp;
   }
