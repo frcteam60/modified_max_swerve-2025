@@ -190,8 +190,15 @@ public final class Constants {
   }
 
   public static class FieldPositions {
+
+    //Red Coral Station tags
     public static final Pose2d tag1 = new Pose2d(16.697198, 0.65532, Rotation2d.fromDegrees(126));
-  
+    public static final Pose2d tag2 = new Pose2d(16.697198,	7.39648, Rotation2d.fromDegrees(234));
+    // Red Processor tag
+    public static final Pose2d tag3 = new Pose2d(11.56081,	8.05561, Rotation2d.fromDegrees(270));
+    
+    public static final Pose2d tag4 = new Pose2d(9.27608,	6.137656, Rotation2d.fromDegrees(0));
+    public static final Pose2d tag5 = new Pose2d(9.27608,1.914906, Rotation2d.fromDegrees(0));
 
     //Red reef AprilTags
     public static final Pose2d tag6 = new Pose2d(13.474446, 3.306318, Rotation2d.fromDegrees(300));
@@ -200,6 +207,12 @@ public final class Constants {
     public static final Pose2d tag9 = new Pose2d(12.643358, 4.745482, Rotation2d.fromDegrees(120));
     public static final Pose2d tag10 = new Pose2d(12.227306, 4.0259, Rotation2d.fromDegrees(180));
     public static final Pose2d tag11 = new Pose2d(12.643358, 3.306318, Rotation2d.fromDegrees(240));
+    
+    // Blue Coral Station tags
+    public static final Pose2d tag12 = new Pose2d(0.851154,	0.65532, Rotation2d.fromDegrees(54));
+    public static final Pose2d tag13 = new Pose2d(0.851154,	7.39648, Rotation2d.fromDegrees(306));
+    //Blue Processor tag
+    public static final Pose2d tag16 = new Pose2d(5.987542, -0.00381, Rotation2d.fromDegrees(90));
     //Blue reef AprilTags
     public static final Pose2d tag17 = new Pose2d(4.073906, 3.306318, Rotation2d.fromDegrees(240));
     public static final Pose2d tag18 = new Pose2d(3.6576, 4.0259, Rotation2d.fromDegrees(180));
@@ -208,45 +221,43 @@ public final class Constants {
     public static final Pose2d tag21 = new Pose2d(5.321046, 4.0259, Rotation2d.fromDegrees(0));
     public static final Pose2d tag22 = new Pose2d(4.90474, 3.306318, Rotation2d.fromDegrees(300));
 
-
-    // TODO add numbers and remember to switch rotation correctly
     //Left lineup spots
     //Red reef
-    public static final Pose2d leftTag6 = new Pose2d();
-    public static final Pose2d leftTag7 = new Pose2d();
-    public static final Pose2d leftTag8 = new Pose2d();
-    public static final Pose2d leftTag9 = new Pose2d();
-    public static final Pose2d leftTag10 = new Pose2d();
-    public static final Pose2d leftTag11 = new Pose2d();
+    public static final Pose2d leftTag6 = new Pose2d(13.56006521, 2.827821185, Rotation2d.fromDegrees(120));
+    public static final Pose2d leftTag7 = new Pose2d(14.347698, 3.8608, Rotation2d.fromDegrees(180));
+    public static final Pose2d leftTag8 = new Pose2d(13.84602679, 5.058878815, Rotation2d.fromDegrees(240));
+    public static final Pose2d leftTag9 = new Pose2d(12.55773879, 5.223978815, Rotation2d.fromDegrees(300));
+    public static final Pose2d leftTag10 = new Pose2d(11.770106, 4.191, Rotation2d.fromDegrees(0));
+    public static final Pose2d leftTag11 = new Pose2d(12.27177721, 2.992921185, Rotation2d.fromDegrees(60));
     //Rotation2d.fromDegrees()
 
     //Left lineup spots
     //Blue reef
-    public static final Pose2d leftTag17 = new Pose2d();
-    public static final Pose2d leftTag18 = new Pose2d();
-    public static final Pose2d leftTag19 = new Pose2d();
-    public static final Pose2d leftTag20 = new Pose2d();
-    public static final Pose2d leftTag21 = new Pose2d();
-    public static final Pose2d leftTag22 = new Pose2d();
+    public static final Pose2d leftTag17 = new Pose2d(3.702325206,	2.992921185, Rotation2d.fromDegrees(60));
+    public static final Pose2d leftTag18 = new Pose2d(3.2004,	4.191, Rotation2d.fromDegrees(0));
+    public static final Pose2d leftTag19 = new Pose2d(3.988286794,	5.223978815, Rotation2d.fromDegrees(300));
+    public static final Pose2d leftTag20 = new Pose2d(5.276320794,	5.058878815, Rotation2d.fromDegrees(240));
+    public static final Pose2d leftTag21 = new Pose2d(5.778246,	3.8608, Rotation2d.fromDegrees(180));
+    public static final Pose2d leftTag22 = new Pose2d(4.990359206,	2.827821185, Rotation2d.fromDegrees(120));
 
     //Right lineup spots
     //Red reef
-    public static final Pose2d rightTag6 = new Pose2d();
-    public static final Pose2d rightTag7 = new Pose2d();
-    public static final Pose2d rightTag8 = new Pose2d();
-    public static final Pose2d rightTag9 = new Pose2d();
-    public static final Pose2d rightTag10 = new Pose2d();
-    public static final Pose2d rightTag11 = new Pose2d();
+    public static final Pose2d rightTag6 = new Pose2d(13.84602679,	2.992921185, Rotation2d.fromDegrees(120));
+    public static final Pose2d rightTag7 = new Pose2d(14.347698,	4.191, Rotation2d.fromDegrees(180));
+    public static final Pose2d rightTag8 = new Pose2d(13.56006521,	5.223978815, Rotation2d.fromDegrees(240));
+    public static final Pose2d rightTag9 = new Pose2d(12.27177721,	5.058878815, Rotation2d.fromDegrees(300));
+    public static final Pose2d rightTag10 = new Pose2d(11.770106,	3.8608, Rotation2d.fromDegrees(0));
+    public static final Pose2d rightTag11 = new Pose2d(12.55773879, 2.827821185, Rotation2d.fromDegrees(60));
     //Rotation2d.fromDegrees()
 
     //Right lineup spots
     //Blue reef
-    public static final Pose2d rightTag17 = new Pose2d();
-    public static final Pose2d rightTag18 = new Pose2d();
-    public static final Pose2d rightTag19 = new Pose2d();
-    public static final Pose2d rightTag20 = new Pose2d();
-    public static final Pose2d rightTag21 = new Pose2d();
-    public static final Pose2d rightTag22 = new Pose2d();
+    public static final Pose2d rightTag17 = new Pose2d(3.988286794,	2.827821185, Rotation2d.fromDegrees(60));
+    public static final Pose2d rightTag18 = new Pose2d(3.2004,	3.8608, Rotation2d.fromDegrees(0));
+    public static final Pose2d rightTag19 = new Pose2d(3.702325206,	5.058878815, Rotation2d.fromDegrees(300));
+    public static final Pose2d rightTag20 = new Pose2d(4.990359206,	5.223978815, Rotation2d.fromDegrees(240));
+    public static final Pose2d rightTag21 = new Pose2d(5.778246,	4.191, Rotation2d.fromDegrees(180));
+    public static final Pose2d rightTag22 = new Pose2d(5.276320794,	2.992921185, Rotation2d.fromDegrees(120));
 
   }
 }

@@ -58,6 +58,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
@@ -79,6 +80,9 @@ public class Elevator extends SubsystemBase {
   private final SparkMax elevatorTwoMax;
   private final RelativeEncoder elevatorOneEncoder;
   private final RelativeEncoder elevatorTwoEncoder;
+
+  private final SparkClosedLoopController elevatorOneClosedLoopController;
+  private final SparkClosedLoopController elevatorTwoClosedLoopController;
 
 
   //TODO need new limits
@@ -111,6 +115,12 @@ public class Elevator extends SubsystemBase {
 
     elevatorOneEncoder = elevatorOneMax.getEncoder();
     elevatorTwoEncoder = elevatorTwoMax.getEncoder();
+
+    elevatorOneClosedLoopController = elevatorOneMax.getClosedLoopController();
+    elevatorTwoClosedLoopController = elevatorTwoMax.getClosedLoopController();
+
+    elevatorOneMax.configure(Configs.ElevatorConfigures.elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    elevatorTwoMax.configure(Configs.ElevatorConfigures.elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     //elevatorOneMax.configure(null, null, null);
 

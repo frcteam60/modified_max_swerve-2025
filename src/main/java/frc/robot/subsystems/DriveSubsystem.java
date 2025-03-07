@@ -535,7 +535,44 @@ public class DriveSubsystem extends SubsystemBase {
     return linedUp;
   }
 
+  public void driveToProcessor(){
+    if(blue){
+      driveToPosition(new Pose2d(5.987542,	0.45339, Rotation2d.fromDegrees(270)));
+    } else {
+      driveToPosition(new Pose2d(11.56081,	7.59841, Rotation2d.fromDegrees(90)));
+    }
+
+  }
+
+  public void turnToCoralStation(double xSpeed, double ySpeed){
+    Pose2d currentPose = getPose();
+    if(blue){
+      double distanceToTwelve = getDistanceBetween(currentPose, FieldPositions.tag12);
+      double distanceToThirteen = getDistanceBetween(currentPose, FieldPositions.tag13);
+
+      if(distanceToTwelve < distanceToThirteen){
+        //Twelve
+        turnDrive(xSpeed, ySpeed, 234, true);
+      } else {
+        //Thirteen
+        turnDrive(xSpeed, ySpeed, 126, true);
+      }
+    } else {
+      double distanceToOne = getDistanceBetween(currentPose, FieldPositions.tag1);
+      double distanceToTwo = getDistanceBetween(currentPose, FieldPositions.tag2);
+
+      if(distanceToOne < distanceToTwo){
+        //One
+        turnDrive(xSpeed, ySpeed, 306, true);
+      } else {
+        //Two
+        turnDrive(xSpeed, ySpeed, 54, true);
+      }
+    }
+  }
+
   public void driveToPosition(Pose2d positionWanted){
+    // field centric pose
     double desiredXSpeed = positionWanted.getX() - getPose().getX();
     double desiredYSpeed = positionWanted.getY() - getPose().getY();
     double desiredRotSpeed = angleSubtractor(positionWanted.getRotation().getDegrees(), getPose().getRotation().getDegrees());
