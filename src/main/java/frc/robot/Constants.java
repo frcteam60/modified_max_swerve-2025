@@ -50,6 +50,12 @@ public final class Constants {
     // rear two 19
     //public static final int
   }
+
+  public static final class AlgaeConstants {
+    public static final int algaeLeftCANID = 16;
+    public static final int algaeRightCANID = 17;
+  }
+  
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds

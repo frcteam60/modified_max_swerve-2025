@@ -28,6 +28,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.RobotConstants;
+import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Elevator;
@@ -60,6 +61,7 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final Elevator lift = new Elevator();
+  private final AlgaeSubsystem algae = new AlgaeSubsystem();
 
 
   // The driver's controller
@@ -79,6 +81,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
+    configureSecondaryButtonBindings();
+
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -91,11 +95,11 @@ public class RobotContainer {
                 true),
             m_robotDrive));
 
-    lift.setDefaultCommand(
-      new RunCommand(
-        () -> lift.runElevator(-secondXboxController.getLeftY()), 
-        lift)
-    );
+        lift.setDefaultCommand(
+          new RunCommand(
+            () -> lift.runElevator(-secondXboxController.getLeftY()), 
+            lift)
+        );
 
     //TODO register commands also I think ? only if I use other commands?
     // Build an auto chooser. This will use Commands.none() as the default option.
@@ -190,8 +194,21 @@ public class RobotContainer {
             true), 
             m_robotDrive));
 
-    
   }
+
+  private void configureSecondaryButtonBindings() {
+
+    new JoystickButton(secondXboxController, Button.kA.value)
+        .whileTrue(new RunCommand(() -> algae.algaeIntake(), algae))
+        .onFalse(new RunCommand(()->algae.algaeStop(), algae));
+
+    new JoystickButton(secondXboxController, Button.kX.value)
+        .whileTrue(new RunCommand(() -> algae.algaeExpel(), algae))
+        .onFalse(new RunCommand(()->algae.algaeStop(), algae));
+
+  }
+
+
   //Method for displaying abs encoder values for finding offset
   public void displayAbsoluteAngle(){
     m_robotDrive.displayAbsValues();
