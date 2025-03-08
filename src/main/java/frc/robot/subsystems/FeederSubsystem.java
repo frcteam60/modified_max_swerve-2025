@@ -17,7 +17,7 @@ public class FeederSubsystem extends SubsystemBase {
   private final SparkMax feederMax;
   private final RelativeEncoder feederEncoder;
 
-  private final double runSpeed = 0.8;
+  private final double runSpeed = 0.3;
 
   /** Creates a new FeederSubsystem. */
   public FeederSubsystem() {

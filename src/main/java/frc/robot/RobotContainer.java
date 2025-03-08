@@ -134,8 +134,8 @@ public class RobotContainer {
             m_robotDrive));
 
     // resets Odom to 1, 1, 0
-    //Y Button
-    new JoystickButton(m_driverController, Button.kY.value)
+    //Right Bumper
+    new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.resetOdometry(new Pose2d(1, 1, Rotation2d.fromDegrees(0))), m_robotDrive));
           
@@ -144,27 +144,45 @@ public class RobotContainer {
         //.whileTrue(goTo(new Pose2d(3.66-(RobotConstants.robotWidthWithBumpers/2) + inToMeter(12), 4.03, Rotation2d.fromDegrees(0))));
         .whileTrue(new RunCommand(goTo(null, null), null)); */
 
-    // Line up 12in before tag 18
+/*     // Line up 12in before tag 18
     //B Button
     new JoystickButton(m_driverController, Button.kB.value)
         //.whileTrue(goTo(new Pose2d(3.66-(RobotConstants.robotWidthWithBumpers/2) + inToMeter(12), 4.03, Rotation2d.fromDegrees(0))));
         .whileTrue(new RunCommand( 
-          () -> m_robotDrive.driveToPosition(new Pose2d(3.3552, 4.03, Rotation2d.fromDegrees(0))), m_robotDrive));
+          () -> m_robotDrive.driveToPosition(new Pose2d(3.3552, 4.03, Rotation2d.fromDegrees(0))), m_robotDrive)); */
 
-    //Goes to zero-zero-zero
+    /* //Goes to zero-zero-zero
     //Button A
     new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.driveToPosition(new Pose2d(0, 0, Rotation2d.fromDegrees(0))), 
-          m_robotDrive));
+          m_robotDrive)); */
 
 ///////////////////////////////////////////////////////
 /// 
-/*     //Coral Station
+    //Processor
     new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(new RunCommand(
-          () -> m_robotDrive.driveToProcessor(new Pose2d(0, 0, Rotation2d.fromDegrees(0))), 
-          m_robotDrive)); */
+          () -> m_robotDrive.driveToProcessor(), 
+          m_robotDrive));
+
+    //Left Reef
+    new JoystickButton(m_driverController, Button.kX.value)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.driveToReef(true), 
+          m_robotDrive));
+
+    //Right Reef
+    new JoystickButton(m_driverController, Button.kB.value)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.driveToReef(false), 
+          m_robotDrive));
+    //Coral Station
+    new JoystickButton(m_driverController, Button.kY.value)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.turnToCoralStation(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband)), 
+          m_robotDrive));
     //North
     new POVButton(m_driverController, 0)
         .whileTrue(new RunCommand(
