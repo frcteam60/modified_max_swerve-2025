@@ -32,6 +32,7 @@ import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.FeederSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -62,6 +63,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final Elevator lift = new Elevator();
   private final AlgaeSubsystem algae = new AlgaeSubsystem();
+  private final FeederSubsystem feeder = new FeederSubsystem();
 
 
   // The driver's controller
@@ -204,9 +206,18 @@ public class RobotContainer {
 
     new JoystickButton(secondXboxController, Button.kX.value)
         .whileTrue(new RunCommand(() -> algae.algaeExpel(), algae))
-        .onFalse(new RunCommand(()->algae.algaeStop(), algae));
+        .onFalse(new RunCommand(() -> algae.algaeStop(), algae));
+
+    new JoystickButton(secondXboxController, Button.kRightBumper.value)
+        .whileTrue(new RunCommand(() -> feeder.runFeeder(), feeder))
+        .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
+
+    new JoystickButton(secondXboxController, Button.kLeftBumper.value)
+        .whileTrue(new RunCommand(() -> feeder.reverseFeeder(), feeder))
+        .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
 
   }
+
 
 
   //Method for displaying abs encoder values for finding offset
