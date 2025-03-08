@@ -58,6 +58,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   public void algaeStop(){
+    leftAlgaeMax.stopMotor();
     rightAlgaeMax.stopMotor();
 
   }
