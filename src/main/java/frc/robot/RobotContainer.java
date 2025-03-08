@@ -29,6 +29,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Elevator;
@@ -63,6 +64,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final Elevator lift = new Elevator();
   private final AlgaeSubsystem algae = new AlgaeSubsystem();
+  private final CoralSubsystem coral = new CoralSubsystem();
   private final FeederSubsystem feeder = new FeederSubsystem();
 
 
@@ -207,6 +209,14 @@ public class RobotContainer {
     new JoystickButton(secondXboxController, Button.kX.value)
         .whileTrue(new RunCommand(() -> algae.algaeExpel(), algae))
         .onFalse(new RunCommand(() -> algae.algaeStop(), algae));
+
+        new JoystickButton(secondXboxController, Button.kB.value)
+            .whileTrue(new RunCommand(() -> coral.coralIntake(), coral))
+            .onFalse(new RunCommand(()->coral.coralStop(), coral));
+    
+        new JoystickButton(secondXboxController, Button.kY.value)
+            .whileTrue(new RunCommand(() -> coral.coralExpel(), coral))
+            .onFalse(new RunCommand(() -> coral.coralStop(), coral));
 
     new JoystickButton(secondXboxController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(() -> feeder.runFeeder(), feeder))

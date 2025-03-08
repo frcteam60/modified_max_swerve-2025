@@ -56,6 +56,10 @@ public final class Constants {
     public static final int algaeRightCANID = 17;
   }
 
+  public static final class CoralConstants {
+    public static final int coralCANID = 15;
+  }
+
   public static final class FeederConstants {
     public static final int feederCANID = 9;
   }

@@ -4,27 +4,26 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.Constants.FeederConstants;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CoralConstants;
 
-public class FeederSubsystem extends SubsystemBase {
+public class CoralSubsystem extends SubsystemBase {
 
-  private final SparkMax feederMax;
-  private final RelativeEncoder feederEncoder;
+  private final SparkMax CoralMax;
+  private final RelativeEncoder CoralEncoder;
 
   private final double runSpeed = 0.8;
 
-  /** Creates a new FeederSubsystem. */
-  public FeederSubsystem() {
+  /** Creates a new CoralSubsystem. */
+  public CoralSubsystem() {
     
-    feederMax = new SparkMax(FeederConstants.feederCANID, MotorType.kBrushless);
+    CoralMax = new SparkMax(CoralConstants.coralCANID, MotorType.kBrushless);
 
-    feederEncoder = feederMax.getEncoder();
+    CoralEncoder = CoralMax.getEncoder();
   }
 
   @Override
@@ -32,15 +31,15 @@ public class FeederSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void runFeeder() {
-    feederMax.set(runSpeed);
+  public void coralIntake() {
+    CoralMax.set(runSpeed);
   }
 
-  public void reverseFeeder() {
-    feederMax.set(-1*runSpeed);
+  public void coralExpel() {
+    CoralMax.set(-1*runSpeed);
   }
 
-  public void stopFeeder() {
-    feederMax.stopMotor();
+  public void coralStop() {
+    CoralMax.stopMotor();
   }
 }
