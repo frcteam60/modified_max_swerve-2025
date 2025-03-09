@@ -6,40 +6,78 @@ package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Configs;
 import frc.robot.Constants.CoralConstants;
 
 public class CoralSubsystem extends SubsystemBase {
 
-  private final SparkMax CoralMax;
-  private final RelativeEncoder CoralEncoder;
+  private final SparkMax coralWheel;
+  private final SparkMax tiltMax;
+  private final RelativeEncoder coralWheelEncoder;
+  private final RelativeEncoder tiltEncoder;
+
+  private final SparkClosedLoopController tiltClosedLoopController;
 
   private final double runSpeed = 0.8;
 
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
     
-    CoralMax = new SparkMax(CoralConstants.coralCANID, MotorType.kBrushless);
+    coralWheel = new SparkMax(CoralConstants.coralCANID, MotorType.kBrushless);
+    coralWheelEncoder = coralWheel.getEncoder();
 
-    CoralEncoder = CoralMax.getEncoder();
+    tiltMax = new SparkMax(CoralConstants.tiltCANID, MotorType.kBrushless);
+    tiltEncoder = tiltMax.getEncoder();
+
+    tiltClosedLoopController = tiltMax.getClosedLoopController();
+
+    coralWheel.configure(Configs.CoralConfig.coralWheelConfig, ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+    tiltMax.configure(Configs.CoralConfig.coralTiltConfig, ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    showEncoders();
   }
 
   public void coralIntake() {
-    CoralMax.set(runSpeed);
+    coralWheel.set(runSpeed);
   }
 
   public void coralExpel() {
-    CoralMax.set(-1*runSpeed);
+    coralWheel.set(-1*runSpeed);
   }
 
   public void coralStop() {
-    CoralMax.stopMotor();
+    coralWheel.stopMotor();
+  }
+
+  public void tiltEndEffector(double speed){
+    tiltMax.set(speed*0.25);
+  }
+
+  public void tiltStop(){
+    tiltMax.stopMotor();;
+  }
+
+  public void tiltTo(double desiredPosition){
+    tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition);
+  }
+
+  public void showEncoders(){
+    SmartDashboard.putNumber("End Effector angle", tiltEncoder.getPosition());
+    SmartDashboard.putNumber("Coral Wheel", coralWheelEncoder.getVelocity());
   }
 }

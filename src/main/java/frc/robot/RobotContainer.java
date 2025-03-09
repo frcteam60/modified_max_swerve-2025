@@ -51,7 +51,6 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
-//TODO figure out where I need vision, drive or container
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -62,10 +61,11 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final Elevator lift = new Elevator();
+  //TODO add in for Water Tight
+  /* private final Elevator lift = new Elevator();
   private final AlgaeSubsystem algae = new AlgaeSubsystem();
   private final CoralSubsystem coral = new CoralSubsystem();
-  private final FeederSubsystem feeder = new FeederSubsystem();
+  private final FeederSubsystem feeder = new FeederSubsystem(); */
 
 
   // The driver's controller
@@ -74,7 +74,8 @@ public class RobotContainer {
 
   // The secondary controller
   //port one
-  XboxController secondXboxController = new XboxController(OIConstants.kSecondControllerPort);
+  //TODO add back in for Water Tight
+  //XboxController secondXboxController = new XboxController(OIConstants.kSecondControllerPort);
 
   private final SendableChooser<Command> autoChooser;
     
@@ -84,8 +85,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-
-    configureSecondaryButtonBindings();
+    //TODO add back in for Water Tight
+    //configureSecondaryButtonBindings();
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -98,12 +99,12 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
-
-        lift.setDefaultCommand(
+        //TODO add back in for Water Tight
+        /* lift.setDefaultCommand(
           new RunCommand(
             () -> lift.runElevator(-secondXboxController.getLeftY()), 
             lift)
-        );
+        );*/
 
     //TODO register commands also I think ? only if I use other commands?
     // Build an auto chooser. This will use Commands.none() as the default option.
@@ -218,7 +219,8 @@ public class RobotContainer {
 
   }
 
-  private void configureSecondaryButtonBindings() {
+  //TODO add back in for Water Tight
+  /* private void configureSecondaryButtonBindings() {
 
     new JoystickButton(secondXboxController, Button.kA.value)
         .whileTrue(new RunCommand(() -> algae.algaeIntake(), algae))
@@ -245,7 +247,7 @@ public class RobotContainer {
         .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
 
   }
-
+ */
 
 
   //Method for displaying abs encoder values for finding offset

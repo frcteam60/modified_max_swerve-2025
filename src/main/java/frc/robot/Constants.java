@@ -58,10 +58,17 @@ public final class Constants {
 
   public static final class CoralConstants {
     public static final int coralCANID = 15;
+    public static final int tiltCANID = 13;
   }
 
   public static final class FeederConstants {
     public static final int feederCANID = 9;
+  }
+
+  public static final class  ClimberConstants {
+    public static final int climberOneCANID = 8;
+    public static final int climberTwoCANID = 7;
+    
   }
 
   public static final class DriveConstants {
@@ -118,14 +125,15 @@ public final class Constants {
 
     //Absolute Encoder offsets
     //Our relative encoders output radians after we apply the conversion factor
-    /* public static final double kFrontLeftAbsOffset = Math.toRadians(0.009997 * 360);
+    public static final double kFrontLeftAbsOffset = Math.toRadians(0.009997 * 360);
     public static final double kRearLeftAbsOffset = Math.toRadians(0.771441 * 360);
     public static final double kFrontRightAbsOffset = Math.toRadians(0.110444 * 360);
-    public static final double kRearRightAbsOffset = Math.toRadians(0.238739 * 360); */
+    public static final double kRearRightAbsOffset = Math.toRadians(0.238739 * 360);
+    /* //Water Tight
     public static final double kFrontLeftAbsOffset = Math.toRadians(0.473 * 360);
     public static final double kRearLeftAbsOffset = Math.toRadians(0.67 * 360);
     public static final double kFrontRightAbsOffset = Math.toRadians(0.901 * 360);
-    public static final double kRearRightAbsOffset = Math.toRadians(0.34 * 360);
+    public static final double kRearRightAbsOffset = Math.toRadians(0.34 * 360); */
   }
 
   public static final class ModuleConstants {

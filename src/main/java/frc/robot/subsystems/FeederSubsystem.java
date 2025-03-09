@@ -7,8 +7,11 @@ package frc.robot.subsystems;
 import frc.robot.Constants.FeederConstants;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -25,6 +28,10 @@ public class FeederSubsystem extends SubsystemBase {
     feederMax = new SparkMax(FeederConstants.feederCANID, MotorType.kBrushless);
 
     feederEncoder = feederMax.getEncoder();
+
+    SparkMaxConfig feederConfig = new SparkMaxConfig();
+    feederConfig.inverted(true);
+    feederMax.configure(feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override

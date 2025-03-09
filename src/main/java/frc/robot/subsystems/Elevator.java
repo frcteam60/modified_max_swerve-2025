@@ -55,6 +55,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -88,6 +89,8 @@ public class Elevator extends SubsystemBase {
   //TODO need new limits
   double lowerLimit = 1;
   double upperLimit = 19.90485;
+
+  double runSpeed = 1;
   //9.904806
   //three something at board height
   /*
@@ -137,7 +140,6 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     showEncoders();
     
-
     
   }
 
@@ -164,11 +166,17 @@ public class Elevator extends SubsystemBase {
       elevatorOneMax.stopMotor();
       elevatorTwoMax.stopMotor();
     } else{
-      elevatorOneMax.set(0.25*speed);
-      elevatorTwoMax.set(0.25*speed);
-    }
-    elevatorOneMax.set(0.25*speed);
-    elevatorTwoMax.set(0.25*speed);
+      elevatorOneMax.set(0.5*speed);
+      elevatorTwoMax.set(0.5*speed);
+    } 
+   System.out.println("elevatorspeed" + speed);
+    //elevatorOneMax.set(runSpeed*speed);
+    //elevatorTwoMax.set(runSpeed*speed);
+  }
+
+  public void setAtHeight(double desiredHeight){
+    elevatorOneClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
+    elevatorTwoClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
   }
 
 }

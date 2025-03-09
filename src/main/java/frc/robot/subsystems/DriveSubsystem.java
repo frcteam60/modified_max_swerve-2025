@@ -111,6 +111,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   boolean visionEstIsPresent = false;
 
+  double desiredRotAngle;
+
   boolean blue = true;
   boolean allianceYet = false;
   
@@ -165,7 +167,6 @@ public class DriveSubsystem extends SubsystemBase {
           // This will flip the path being followed to the red side of the field.
           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
           //TODO field side probally needs to be in auto init instead not when we turn on?
-          //TODO should this even flip on red?
           var alliance = DriverStation.getAlliance();
           if (alliance.isPresent()) {
             return alliance.get() == DriverStation.Alliance.Red;
@@ -213,6 +214,8 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("BR Encoder Relative", m_rearRight.returnModuleAngle());
     
     SmartDashboard.putString("robotOnField Odom", poseEstimator.getEstimatedPosition().toString());
+
+    SmartDashboard.putNumber("desiredRotAngle", desiredRotAngle);
    
     poseEstimator.update(
         //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
@@ -380,6 +383,8 @@ public class DriveSubsystem extends SubsystemBase {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    desiredRotAngle = getOdomHeading().getDegrees() + (rot*1);
+    //double rotDelivered = (angleSubtractor(desiredRotAngle, getOdomHeading().getDegrees()))* 0.01 * DriveConstants.kMaxAngularSpeed;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -576,6 +581,7 @@ public class DriveSubsystem extends SubsystemBase {
     double desiredXSpeed = positionWanted.getX() - getPose().getX();
     double desiredYSpeed = positionWanted.getY() - getPose().getY();
     double desiredRotSpeed = angleSubtractor(positionWanted.getRotation().getDegrees(), getPose().getRotation().getDegrees());
+    desiredRotAngle = positionWanted.getRotation().getDegrees();
     
     //if we are within an inch of our desired position our desired speed is zero
     if(Math.abs(Math.sqrt((desiredXSpeed*desiredXSpeed)+(desiredYSpeed*desiredYSpeed))) < 0.0254){
@@ -656,6 +662,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    desiredRotAngle = desiredAngleDeg;
     double rotDelivered = (angleSubtractor(desiredAngleDeg, getOdomHeading().getDegrees()))* 0.01 * DriveConstants.kMaxAngularSpeed;
 
     /* public void optimize(Rotation2d currentAngle) {

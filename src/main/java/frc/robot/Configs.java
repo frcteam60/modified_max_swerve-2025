@@ -11,14 +11,6 @@ public final class Configs {
         public static final SparkMaxConfig elevatorConfig = new SparkMaxConfig();
 
         static {
-            // Use module constants to calculate conversion factors and feed forward gain.
-            double drivingFactor = ModuleConstants.kWheelDiameterMeters * Math.PI
-                    / ModuleConstants.kDrivingMotorReduction;
-            //double steeringFactor = 2 * Math.PI;
-            //double steeringFactor = (7.0/96)* 2 * Math.PI;
-            double steeringFactor = 0.4575;
-            double drivingVelocityFeedForward = 1 / ModuleConstants.kDriveWheelFreeSpeedRps;
-
             elevatorConfig
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(50);
@@ -37,6 +29,40 @@ public final class Configs {
         }
         
                 
+    }
+    public static final class CoralConfig{
+        public static final SparkMaxConfig coralWheelConfig = new SparkMaxConfig();
+        public static final SparkMaxConfig coralTiltConfig = new SparkMaxConfig();
+
+        static {
+            coralWheelConfig
+                    .idleMode(IdleMode.kBrake)
+                    //TODO check smart current limit
+                    .smartCurrentLimit(50);
+/*             coralWheelConfig.encoder
+                    .positionConversionFactor(drivingFactor) // meters
+                    .velocityConversionFactor(drivingFactor / 60.0); // meters per second */
+/*             coralWheelConfig.closedLoop
+                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    // These are example gains you may need to them for your own robot!
+                    .pid(0.04, 0, 0)
+                    //.pid(1, 0, 0)
+                    .velocityFF(0)
+                    .outputRange(-1, 1); */
+
+            coralTiltConfig  
+                    .idleMode(IdleMode.kBrake)
+                    .smartCurrentLimit(30);
+            /* steeringConfig.encoder
+                    .positionConversionFactor(steeringFactor) // radians
+                    .velocityConversionFactor(steeringFactor / 60.0); // radians per second        */ 
+            coralTiltConfig.closedLoop
+                    //.feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    // These are example gains you may need to them for your own robot!
+                    .pid(1, 0, 0);
+                    //.pid(0.0, 0, 0)
+        }
     }
 
 

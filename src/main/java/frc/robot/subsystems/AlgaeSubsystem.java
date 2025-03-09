@@ -33,7 +33,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
     SparkMaxConfig invertedConfig = new SparkMaxConfig();
     invertedConfig.inverted(true);
-    leftAlgaeMax.configure(invertedConfig, null, null);
+    leftAlgaeMax.configure(invertedConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -43,8 +43,8 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   public void showEncoders() {
-    SmartDashboard.putNumber("leftAlgae",leftAlgaeEncoder.getPosition());
-    SmartDashboard.putNumber("rightAlgae",rightAlgaeEncoder.getPosition());
+    SmartDashboard.putNumber("leftAlgae velocity", leftAlgaeEncoder.getVelocity());
+    SmartDashboard.putNumber("rightAlgae velocity", rightAlgaeEncoder.getVelocity());
   }
 
   public void algaeIntake() {
