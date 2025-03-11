@@ -91,7 +91,7 @@ public class Climber extends SubsystemBase {
   }
 
   public void runClimber(double speed){
-/*     if(elevatorOneEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
+/*     if(cli.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
       elevatorOneMax.stopMotor();
       elevatorTwoMax.stopMotor();
     } else if (elevatorOneEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
@@ -106,6 +106,8 @@ public class Climber extends SubsystemBase {
   }
 
   public void stopClimber(){
+    climberOne.stopMotor();
+    climberTwo.stopMotor();
 
   }
 

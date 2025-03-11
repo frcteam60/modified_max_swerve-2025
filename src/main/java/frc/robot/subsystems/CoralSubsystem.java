@@ -28,6 +28,11 @@ public class CoralSubsystem extends SubsystemBase {
 
   private final double runSpeed = 0.8;
 
+  //double lowerLimit = 7;
+  double lowerLimit = 16;
+  double upperLimit = 19;
+  //19.5945
+
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
     
@@ -65,11 +70,18 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public void tiltEndEffector(double speed){
-    tiltMax.set(speed*0.25);
+   if(tiltEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
+      tiltMax.stopMotor();
+    } else if (tiltEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
+      tiltMax.stopMotor();
+    } else{
+      tiltMax.set(speed);
+    } 
+    //tiltMax.set(speed);
   }
 
   public void tiltStop(){
-    tiltMax.stopMotor();;
+    tiltMax.stopMotor();
   }
 
   public void tiltTo(double desiredPosition){

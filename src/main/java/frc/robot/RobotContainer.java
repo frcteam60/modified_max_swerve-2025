@@ -29,6 +29,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Vision;
@@ -62,10 +63,11 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   //TODO add in for Water Tight
-  /* private final Elevator lift = new Elevator();
+  private final Elevator lift = new Elevator();
   private final AlgaeSubsystem algae = new AlgaeSubsystem();
   private final CoralSubsystem coral = new CoralSubsystem();
-  private final FeederSubsystem feeder = new FeederSubsystem(); */
+  private final FeederSubsystem feeder = new FeederSubsystem();
+  private final Climber climber = new Climber();
 
 
   // The driver's controller
@@ -75,7 +77,7 @@ public class RobotContainer {
   // The secondary controller
   //port one
   //TODO add back in for Water Tight
-  //XboxController secondXboxController = new XboxController(OIConstants.kSecondControllerPort);
+  XboxController secondXboxController = new XboxController(OIConstants.kSecondControllerPort);
 
   private final SendableChooser<Command> autoChooser;
     
@@ -86,7 +88,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     //TODO add back in for Water Tight
-    //configureSecondaryButtonBindings();
+    configureSecondaryButtonBindings();
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -99,12 +101,32 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
-        //TODO add back in for Water Tight
-        /* lift.setDefaultCommand(
-          new RunCommand(
-            () -> lift.runElevator(-secondXboxController.getLeftY()), 
-            lift)
-        );*/
+    //TODO add back in for Water Tight
+    //Elevator
+    lift.setDefaultCommand(
+      new RunCommand(
+        () -> lift.runElevator(MathUtil.applyDeadband(-secondXboxController.getLeftY(), 0.05)), 
+        lift)
+    );
+
+    //TODO add back in for Water Tight
+    // tilt coral
+    coral.setDefaultCommand(
+      new RunCommand(
+        () -> coral.tiltEndEffector(MathUtil.applyDeadband(-secondXboxController.getRightY(), 0.05)), 
+        coral)
+    );
+
+    //TODO add back in for Water Tight
+    // move climber
+    climber.setDefaultCommand(
+      new RunCommand(
+        () -> climber.runClimber(
+          (secondXboxController.getLeftTriggerAxis() > secondXboxController.getRightTriggerAxis())?
+          secondXboxController.getLeftTriggerAxis() : -secondXboxController.getRightTriggerAxis()), 
+        climber)
+    );
+    
 
     //TODO register commands also I think ? only if I use other commands?
     // Build an auto chooser. This will use Commands.none() as the default option.
@@ -139,6 +161,7 @@ public class RobotContainer {
     new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.resetOdometry(new Pose2d(1, 1, Rotation2d.fromDegrees(0))), m_robotDrive));
+
           
     /* // Line up 12in before tag 18
     new JoystickButton(m_driverController, Button.kLeftBumper.value)
@@ -220,7 +243,7 @@ public class RobotContainer {
   }
 
   //TODO add back in for Water Tight
-  /* private void configureSecondaryButtonBindings() {
+  private void configureSecondaryButtonBindings() {
 
     new JoystickButton(secondXboxController, Button.kA.value)
         .whileTrue(new RunCommand(() -> algae.algaeIntake(), algae))
@@ -230,13 +253,13 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> algae.algaeExpel(), algae))
         .onFalse(new RunCommand(() -> algae.algaeStop(), algae));
 
-        new JoystickButton(secondXboxController, Button.kB.value)
-            .whileTrue(new RunCommand(() -> coral.coralIntake(), coral))
-            .onFalse(new RunCommand(()->coral.coralStop(), coral));
-    
-        new JoystickButton(secondXboxController, Button.kY.value)
-            .whileTrue(new RunCommand(() -> coral.coralExpel(), coral))
-            .onFalse(new RunCommand(() -> coral.coralStop(), coral));
+    new JoystickButton(secondXboxController, Button.kB.value)
+        .whileTrue(new RunCommand(() -> coral.coralIntake(), coral))
+        .onFalse(new RunCommand(()->coral.coralStop(), coral));
+
+    new JoystickButton(secondXboxController, Button.kY.value)
+        .whileTrue(new RunCommand(() -> coral.coralExpel(), coral))
+        .onFalse(new RunCommand(() -> coral.coralStop(), coral));
 
     new JoystickButton(secondXboxController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(() -> feeder.runFeeder(), feeder))
@@ -246,8 +269,8 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> feeder.reverseFeeder(), feeder))
         .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
 
+
   }
- */
 
 
   //Method for displaying abs encoder values for finding offset

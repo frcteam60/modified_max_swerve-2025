@@ -66,8 +66,8 @@ public final class Constants {
   }
 
   public static final class  ClimberConstants {
-    public static final int climberOneCANID = 8;
-    public static final int climberTwoCANID = 7;
+    public static final int climberOneCANID = 10;
+    public static final int climberTwoCANID = 11;
     
   }
 
@@ -125,15 +125,15 @@ public final class Constants {
 
     //Absolute Encoder offsets
     //Our relative encoders output radians after we apply the conversion factor
-    public static final double kFrontLeftAbsOffset = Math.toRadians(0.009997 * 360);
+  /*   public static final double kFrontLeftAbsOffset = Math.toRadians(0.009997 * 360);
     public static final double kRearLeftAbsOffset = Math.toRadians(0.771441 * 360);
     public static final double kFrontRightAbsOffset = Math.toRadians(0.110444 * 360);
-    public static final double kRearRightAbsOffset = Math.toRadians(0.238739 * 360);
-    /* //Water Tight
+    public static final double kRearRightAbsOffset = Math.toRadians(0.238739 * 360); */
+    //Water Tight TODO
     public static final double kFrontLeftAbsOffset = Math.toRadians(0.473 * 360);
     public static final double kRearLeftAbsOffset = Math.toRadians(0.67 * 360);
     public static final double kFrontRightAbsOffset = Math.toRadians(0.901 * 360);
-    public static final double kRearRightAbsOffset = Math.toRadians(0.34 * 360); */
+    public static final double kRearRightAbsOffset = Math.toRadians(0.34 * 360);
   }
 
   public static final class ModuleConstants {
@@ -198,8 +198,8 @@ public final class Constants {
         public static final String kCameraName = "Arducam_OV9782_USB_Camera";
         // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
         public static final Transform3d kRobotToCam =
-                //new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
-                new Transform3d(new Translation3d(0.32385, 0.0, 0.2032), new Rotation3d(0, 0, 0));
+                //new Transform3d(new Translation3d(0.32385, 0.0, 0.2032), new Rotation3d(0, 0, 0));
+                new Transform3d(new Translation3d(0.19685, -0.2794, 0.9144), new Rotation3d(0, 0, 0));
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout =
                 AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);

@@ -52,6 +52,7 @@ public final class Configs {
 
             coralTiltConfig  
                     .idleMode(IdleMode.kBrake)
+                    .inverted(true)
                     .smartCurrentLimit(30);
             /* steeringConfig.encoder
                     .positionConversionFactor(steeringFactor) // radians
@@ -60,7 +61,7 @@ public final class Configs {
                     //.feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     // These are example gains you may need to them for your own robot!
-                    .pid(1, 0, 0);
+                    .pid(0.1, 0, 0);
                     //.pid(0.0, 0, 0)
         }
     }

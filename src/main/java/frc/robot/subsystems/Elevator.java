@@ -88,7 +88,9 @@ public class Elevator extends SubsystemBase {
 
   //TODO need new limits
   double lowerLimit = 1;
-  double upperLimit = 19.90485;
+  double upperLimit = 27;
+  // 28.886920
+  //double upperLimit = 19.90485;
 
   double runSpeed = 1;
   //9.904806
@@ -166,12 +168,11 @@ public class Elevator extends SubsystemBase {
       elevatorOneMax.stopMotor();
       elevatorTwoMax.stopMotor();
     } else{
-      elevatorOneMax.set(0.5*speed);
-      elevatorTwoMax.set(0.5*speed);
-    } 
+      elevatorOneMax.set(runSpeed*speed);
+      elevatorTwoMax.set(runSpeed*speed);
+    }
    System.out.println("elevatorspeed" + speed);
-    //elevatorOneMax.set(runSpeed*speed);
-    //elevatorTwoMax.set(runSpeed*speed);
+
   }
 
   public void setAtHeight(double desiredHeight){

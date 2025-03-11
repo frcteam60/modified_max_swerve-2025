@@ -557,10 +557,10 @@ public class DriveSubsystem extends SubsystemBase {
 
       if(distanceToTwelve < distanceToThirteen){
         //Twelve
-        turnDrive(xSpeed, ySpeed, 234, true);
+        turnDrive(xSpeed, ySpeed, 126, true);
       } else {
         //Thirteen
-        turnDrive(xSpeed, ySpeed, 126, true);
+        turnDrive(xSpeed, ySpeed, 234, true);
       }
     } else {
       double distanceToOne = getDistanceBetween(currentPose, FieldPositions.tag1);
@@ -568,10 +568,10 @@ public class DriveSubsystem extends SubsystemBase {
 
       if(distanceToOne < distanceToTwo){
         //One
-        turnDrive(xSpeed, ySpeed, 306, true);
+        turnDrive(xSpeed, ySpeed, 54, true);
       } else {
         //Two
-        turnDrive(xSpeed, ySpeed, 54, true);
+        turnDrive(xSpeed, ySpeed, 306, true);
       }
     }
   }
