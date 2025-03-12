@@ -88,11 +88,12 @@ public class Elevator extends SubsystemBase {
 
   //TODO need new limits
   double lowerLimit = 1;
-  double upperLimit = 27;
+  double upperLimit = 28.5;
   // 28.886920
   //double upperLimit = 19.90485;
 
   double runSpeed = 1;
+  double downMultiplier = 0.05;
   //9.904806
   //three something at board height
   /*
@@ -167,17 +168,25 @@ public class Elevator extends SubsystemBase {
     } else if (elevatorOneEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
       elevatorOneMax.stopMotor();
       elevatorTwoMax.stopMotor();
-    } else{
+    } else if(speed < 0){
+      elevatorOneMax.set(runSpeed*speed*downMultiplier);
+      elevatorTwoMax.set(runSpeed*speed*downMultiplier);
+    }else{
       elevatorOneMax.set(runSpeed*speed);
       elevatorTwoMax.set(runSpeed*speed);
     }
-   System.out.println("elevatorspeed" + speed);
+  //  System.out.println("elevatorspeed" + speed);
 
   }
 
   public void setAtHeight(double desiredHeight){
     elevatorOneClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
     elevatorTwoClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
+         /* if(tiltEncoder.getPosition()>desiredPosition){
+      tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+     } else {
+      tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot1);
+     } */
   }
 
 }

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -23,6 +24,8 @@ public final class Configs {
                     // TODO tune PIDlop
                     //.pidf(drivingVelocityFeedForward, steeringFactor, drivingFactor, drivingVelocityFeedForward)
                     .pid(0.04, 0, 0);
+                    //.pid(0, 0, 0, ClosedLoopSlot.kSlot0);
+                    //.pid(0, 0, 0, ClosedLoopSlot.kSlot1);
                     //.pid(1, 0, 0)
                     //.velocityFF(drivingVelocityFeedForward)
        
@@ -61,7 +64,12 @@ public final class Configs {
                     //.feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     // These are example gains you may need to them for your own robot!
-                    .pid(0.1, 0, 0);
+                    .iMaxAccum(0.0003)
+                    //.pid(0.005, 0.0002, 2000)
+                    .pid(0.005, 0.0002, 2000, ClosedLoopSlot.kSlot0)
+                    //.pid(0, 0, 0, ClosedLoopSlot.kSlot1);
+                    .outputRange(-0.1, 0.25, ClosedLoopSlot.kSlot0);
+                    //p 0.01
                     //.pid(0.0, 0, 0)
         }
     }

@@ -52,7 +52,7 @@ public class Climber extends SubsystemBase {
   private final WPI_TalonSRX climberOne;
   private final WPI_TalonSRX climberTwo;  
 
-  double runSpeed = 0.5;
+  double runSpeed = 1;
   
 
   /** Creates a new DriveSubsystem. */

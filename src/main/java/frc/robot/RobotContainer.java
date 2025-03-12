@@ -18,11 +18,13 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator.ControlVectorList;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Joystick.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 //import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import frc.robot.Configs.ElevatorConfigures;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -79,6 +81,9 @@ public class RobotContainer {
   //TODO add back in for Water Tight
   XboxController secondXboxController = new XboxController(OIConstants.kSecondControllerPort);
 
+  /* Joystick flighJoystick = new Joystick(2);
+  Joystick steeringWheel = new Joystick(3); */
+
   private final SendableChooser<Command> autoChooser;
     
   /**
@@ -101,6 +106,20 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
+
+/*     // Configure default commands
+    m_robotDrive.setDefaultCommand(
+        // The left stick controls translation of the robot.
+        // Turning is controlled by the X axis of the right stick.
+        new RunCommand(
+            () -> m_robotDrive.humanDrive(
+                -MathUtil.applyDeadband(flighJoystick.getY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(flighJoystick.getX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband),
+                true),
+            m_robotDrive)); */
+
+
     //TODO add back in for Water Tight
     //Elevator
     lift.setDefaultCommand(
@@ -245,21 +264,21 @@ public class RobotContainer {
   //TODO add back in for Water Tight
   private void configureSecondaryButtonBindings() {
 
-    new JoystickButton(secondXboxController, Button.kA.value)
+    /* new JoystickButton(secondXboxController, Button.kA.value)
         .whileTrue(new RunCommand(() -> algae.algaeIntake(), algae))
-        .onFalse(new RunCommand(()->algae.algaeStop(), algae));
+        .onFalse(new RunCommand(()->algae.algaeStop(), algae)); */
+    new JoystickButton(secondXboxController, Button.kA.value)
+        .whileTrue(new RunCommand(() -> coral.tiltTo(55), coral));
 
     new JoystickButton(secondXboxController, Button.kX.value)
         .whileTrue(new RunCommand(() -> algae.algaeExpel(), algae))
         .onFalse(new RunCommand(() -> algae.algaeStop(), algae));
 
     new JoystickButton(secondXboxController, Button.kB.value)
-        .whileTrue(new RunCommand(() -> coral.coralIntake(), coral))
-        .onFalse(new RunCommand(()->coral.coralStop(), coral));
+        .whileTrue(new RunCommand(() -> coral.coralIntake(), coral));
 
     new JoystickButton(secondXboxController, Button.kY.value)
-        .whileTrue(new RunCommand(() -> coral.coralExpel(), coral))
-        .onFalse(new RunCommand(() -> coral.coralStop(), coral));
+        .whileTrue(new RunCommand(() -> coral.coralExpel(), coral));
 
     new JoystickButton(secondXboxController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(() -> feeder.runFeeder(), feeder))
@@ -268,7 +287,6 @@ public class RobotContainer {
     new JoystickButton(secondXboxController, Button.kLeftBumper.value)
         .whileTrue(new RunCommand(() -> feeder.reverseFeeder(), feeder))
         .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
-
 
   }
 
