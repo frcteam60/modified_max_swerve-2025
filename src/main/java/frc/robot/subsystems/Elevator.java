@@ -85,6 +85,13 @@ public class Elevator extends SubsystemBase {
   private final SparkClosedLoopController elevatorOneClosedLoopController;
   private final SparkClosedLoopController elevatorTwoClosedLoopController;
 
+  
+  double L4Height = 27.36;
+  double L3Height = 17.50;
+  double L2Height = 10.47;
+  double L1Height = 6.08;
+  double L0Height = 0;
+
 
   //TODO need new limits
   double lowerLimit = 1;
@@ -187,6 +194,23 @@ public class Elevator extends SubsystemBase {
      } else {
       tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot1);
      } */
+  }
+
+  
+  public void lineUpL4(){
+    setAtHeight(L4Height);
+  }
+  public void lineUp3(){
+    setAtHeight(L3Height);
+  }
+  public void lineUpL2(){
+    setAtHeight(L2Height);
+  }
+  public void lineUpL1(){
+    setAtHeight(L1Height);
+  }
+  public void lineUpL0(){
+    setAtHeight(L0Height);
   }
 
 }

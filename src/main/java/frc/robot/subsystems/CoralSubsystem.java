@@ -36,12 +36,13 @@ public class CoralSubsystem extends SubsystemBase {
   //95
   //19.5945
 
-  double L4Height = 27.36;
-  double L3Height = 17.50;
-  double L2Height = 10.47;
-  double L1Height = 6.08;
-  double L0Height = 0;
-
+  //TODO get these angles
+  double L4Angle = 90;
+  double L3Angle = 95;
+  double L2Angle = 95;
+  double L1Angle = 90;
+  double L0Angle = 5;
+ 
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
     
@@ -130,18 +131,18 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public void lineUpL4(){
-    tiltTo(L4Height);
+    tiltTo(L4Angle);
   }
   public void lineUp3(){
-    tiltTo(L3Height);
+    tiltTo(L3Angle);
   }
   public void lineUpL2(){
-    tiltTo(L2Height);
+    tiltTo(L2Angle);
   }
   public void lineUpL1(){
-    tiltTo(L1Height);
+    tiltTo(L1Angle);
   }
   public void lineUpL0(){
-    tiltTo(L0Height);
+    tiltTo(L0Angle);
   }
 }
