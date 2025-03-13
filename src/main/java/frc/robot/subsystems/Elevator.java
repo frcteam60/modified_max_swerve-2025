@@ -200,7 +200,7 @@ public class Elevator extends SubsystemBase {
   public void lineUpL4(){
     setAtHeight(L4Height);
   }
-  public void lineUp3(){
+  public void lineUpL3(){
     setAtHeight(L3Height);
   }
   public void lineUpL2(){

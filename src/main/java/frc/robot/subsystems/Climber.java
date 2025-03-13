@@ -84,10 +84,10 @@ public class Climber extends SubsystemBase {
   }
 
   public void climberIn(){
-    runClimber(1);
+    runClimber(-1);
   }
   public void climberOut(){
-    runClimber(-1);
+    runClimber(1);
   }
 
   public void runClimber(double speed){

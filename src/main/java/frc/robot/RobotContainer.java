@@ -37,6 +37,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.TiltSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -68,6 +69,7 @@ public class RobotContainer {
   private final Elevator lift = new Elevator();
   private final AlgaeSubsystem algae = new AlgaeSubsystem();
   private final CoralSubsystem coral = new CoralSubsystem();
+  private final TiltSubsystem tiltCoral = new TiltSubsystem();
   private final FeederSubsystem feeder = new FeederSubsystem();
   private final Climber climber = new Climber();
 
@@ -109,8 +111,6 @@ public class RobotContainer {
 
 /*     // Configure default commands
     m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.humanDrive(
                 -MathUtil.applyDeadband(flighJoystick.getY(), OIConstants.kDriveDeadband),
@@ -130,22 +130,20 @@ public class RobotContainer {
 
     //TODO add back in for Water Tight
     // tilt coral
-    coral.setDefaultCommand(
+    tiltCoral.setDefaultCommand(
       new RunCommand(
-        () -> coral.tiltEndEffector(MathUtil.applyDeadband(-secondXboxController.getRightY(), 0.05)), 
-        coral)
+        () -> tiltCoral.tiltEndEffector(MathUtil.applyDeadband(-secondXboxController.getRightY(), 0.05)), 
+        tiltCoral)
     );
 
     //TODO add back in for Water Tight
-    // move climber
-    climber.setDefaultCommand(
+    // coral wheel
+    coral.setDefaultCommand(
       new RunCommand(
-        () -> climber.runClimber(
-          (secondXboxController.getLeftTriggerAxis() > secondXboxController.getRightTriggerAxis())?
-          secondXboxController.getLeftTriggerAxis() : -secondXboxController.getRightTriggerAxis()), 
-        climber)
+        () -> coral.runCoral(secondXboxController.getLeftTriggerAxis() > secondXboxController.getRightTriggerAxis()?
+        secondXboxController.getLeftTriggerAxis() : -secondXboxController.getRightTriggerAxis()), coral)
     );
-    
+
 
     //TODO register commands also I think ? only if I use other commands?
     // Build an auto chooser. This will use Commands.none() as the default option.
@@ -268,30 +266,59 @@ public class RobotContainer {
 
   //TODO add back in for Water Tight
   private void configureSecondaryButtonBindings() {
-
-    /* new JoystickButton(secondXboxController, Button.kA.value)
+    // algae in
+    new JoystickButton(secondXboxController, Button.kY.value)
         .whileTrue(new RunCommand(() -> algae.algaeIntake(), algae))
-        .onFalse(new RunCommand(()->algae.algaeStop(), algae)); */
-    new JoystickButton(secondXboxController, Button.kA.value)
-        .whileTrue(new RunCommand(() -> coral.tiltTo(55), coral));
-
-    new JoystickButton(secondXboxController, Button.kX.value)
+        .onFalse(new RunCommand(()->algae.algaeStop(), algae));
+    // algae out
+    new JoystickButton(secondXboxController, Button.kB.value)
         .whileTrue(new RunCommand(() -> algae.algaeExpel(), algae))
         .onFalse(new RunCommand(() -> algae.algaeStop(), algae));
 
-    new JoystickButton(secondXboxController, Button.kB.value)
-        .whileTrue(new RunCommand(() -> coral.coralIntake(), coral));
-
-    new JoystickButton(secondXboxController, Button.kY.value)
-        .whileTrue(new RunCommand(() -> coral.coralExpel(), coral));
-
-    new JoystickButton(secondXboxController, Button.kRightBumper.value)
+    //feeder to front
+    new JoystickButton(secondXboxController, Button.kX.value)
         .whileTrue(new RunCommand(() -> feeder.runFeeder(), feeder))
         .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
-
-    new JoystickButton(secondXboxController, Button.kLeftBumper.value)
+    // reverse feeder
+    new JoystickButton(secondXboxController, Button.kA.value)
         .whileTrue(new RunCommand(() -> feeder.reverseFeeder(), feeder))
         .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
+
+    // lower robot
+    new JoystickButton(secondXboxController, Button.kBack.value)
+        .whileTrue(new RunCommand(() -> climber.climberOut(), climber))
+        .onFalse(new RunCommand(() -> climber.stopClimber(), climber));
+    // raise robot
+    new JoystickButton(secondXboxController, Button.kStart.value)
+        .whileTrue(new RunCommand(() -> climber.climberIn(), climber))
+        .onFalse(new RunCommand(() -> climber.stopClimber(), climber));
+    //tilt low
+    new JoystickButton(secondXboxController, Button.kLeftBumper.value)
+        .whileTrue(new RunCommand(() -> tiltCoral.tiltTo(10), tiltCoral));
+    // tilt high
+    new JoystickButton(secondXboxController, Button.kRightBumper.value)
+        .whileTrue(new RunCommand(() -> tiltCoral.tiltTo(90), tiltCoral));
+
+    //L4 Elevator
+    new POVButton(m_driverController, 0)
+        .whileTrue(new RunCommand(
+          () -> lift.lineUpL4(), 
+          lift));
+    //L3 Elevator
+    new POVButton(m_driverController, 270)
+      .whileTrue(new RunCommand(
+        () -> lift.lineUpL3(), 
+        lift));
+    //L1 Elevator
+    new POVButton(m_driverController, 90)
+      .whileTrue(new RunCommand(
+        () -> lift.lineUpL1(), 
+        lift));
+    //L2 Elevator
+    new POVButton(m_driverController, 180)
+      .whileTrue(new RunCommand(
+        () -> lift.lineUpL2(), 
+        lift));
 
   }
 

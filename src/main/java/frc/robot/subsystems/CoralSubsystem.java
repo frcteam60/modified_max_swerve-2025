@@ -21,11 +21,7 @@ import frc.robot.Constants.CoralConstants;
 public class CoralSubsystem extends SubsystemBase {
 
   private final SparkMax coralWheel;
-  private final SparkMax tiltMax;
   private final RelativeEncoder coralWheelEncoder;
-  private final RelativeEncoder tiltEncoder;
-
-  private final SparkClosedLoopController tiltClosedLoopController;
 
   private final double runSpeed = 0.8;
 
@@ -49,16 +45,9 @@ public class CoralSubsystem extends SubsystemBase {
     coralWheel = new SparkMax(CoralConstants.coralCANID, MotorType.kBrushless);
     coralWheelEncoder = coralWheel.getEncoder();
 
-    tiltMax = new SparkMax(CoralConstants.tiltCANID, MotorType.kBrushless);
-    tiltEncoder = tiltMax.getEncoder();
-
-    tiltClosedLoopController = tiltMax.getClosedLoopController();
 
     coralWheel.configure(Configs.CoralConfig.coralWheelConfig, ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
-    tiltMax.configure(Configs.CoralConfig.coralTiltConfig, ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-
   }
 
   @Override
@@ -79,70 +68,12 @@ public class CoralSubsystem extends SubsystemBase {
     coralWheel.stopMotor();
   }
 
-  public void tiltEndEffector(double speed){
-    coralStop();
-    System.out.println(speed);
-   if(tiltEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
-    System.out.println("A");
-      tiltMax.stopMotor();
-    } else if (tiltEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
-      System.out.println("B");
-      tiltMax.stopMotor();
-    } else{
-      System.out.println("C");
-      tiltMax.set(speed);
-    } 
-    //tiltMax.set(speed);
+  public void runCoral(double speed){
+    coralWheel.set(speed);
   }
 
-  public void tiltStop(){
-    tiltMax.stopMotor();
-  }
-
-  public void tiltTo(double desiredPosition){
-    coralStop();
-    System.out.println("desired position" + desiredPosition);
-    if(tiltEncoder.getPosition() <= (20+lowerLimit) && (desiredPosition <=(20+lowerLimit))){ 
-     System.out.println("A");
-       tiltMax.stopMotor();
-     } else if (tiltEncoder.getPosition() >= (upperLimit-20) && (desiredPosition >= (upperLimit-20))){
-       System.out.println("B");
-       tiltMax.stopMotor();
-     } else{
-       System.out.println("C");
-       tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
-     }
-
-     /* if(tiltEncoder.getPosition()>desiredPosition){
-      tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
-     } else {
-      tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot1);
-     } */
-  
-  }
 
   public void showEncoders(){
-    SmartDashboard.putNumber("End Effector angle", tiltEncoder.getPosition());
     SmartDashboard.putNumber("Coral Wheel", coralWheelEncoder.getVelocity());
-  }
-
-  public void stopTilt(){
-    tiltMax.stopMotor();
-  }
-
-  public void lineUpL4(){
-    tiltTo(L4Angle);
-  }
-  public void lineUp3(){
-    tiltTo(L3Angle);
-  }
-  public void lineUpL2(){
-    tiltTo(L2Angle);
-  }
-  public void lineUpL1(){
-    tiltTo(L1Angle);
-  }
-  public void lineUpL0(){
-    tiltTo(L0Angle);
   }
 }
