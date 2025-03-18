@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Joystick.ButtonType;
 import edu.wpi.first.wpilibj.Joystick.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,7 +43,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 //import edu.wpi.first.wpilibj2.command
 import edu.wpi.first.math.spline.QuinticHermiteSpline;
 import edu.wpi.first.math.util.Units;
@@ -52,6 +56,7 @@ import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -71,20 +76,20 @@ public class RobotContainer {
   private final CoralSubsystem coral = new CoralSubsystem();
   private final TiltSubsystem tiltCoral = new TiltSubsystem();
   private final FeederSubsystem feeder = new FeederSubsystem();
-  private final Climber climber = new Climber();
+  //private final Climber climber = new Climber();
 
 
   // The driver's controller
   //port zero
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  //XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
   // The secondary controller
   //port one
   //TODO add back in for Water Tight
   XboxController secondXboxController = new XboxController(OIConstants.kSecondControllerPort);
 
-  /* Joystick flighJoystick = new Joystick(2);
-  Joystick steeringWheel = new Joystick(3); */
+  Joystick flightJoystick = new Joystick(2);
+  Joystick steeringWheel = new Joystick(3);
 
   private final SendableChooser<Command> autoChooser;
     
@@ -97,7 +102,7 @@ public class RobotContainer {
     //TODO add back in for Water Tight
     configureSecondaryButtonBindings();
 
-    // Configure default commands
+/*     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -107,18 +112,34 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
-            m_robotDrive));
+            m_robotDrive)); */
 
-/*     // Configure default commands
-    m_robotDrive.setDefaultCommand(
+    // Configure default commands
+/*     m_robotDrive.setDefaultCommand(
         new RunCommand(
             () -> m_robotDrive.humanDrive(
-                -MathUtil.applyDeadband(flighJoystick.getY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(flighJoystick.getX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(flightJoystick.getY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(flightJoystick.getX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive)); */
 
+    // Configure default commands
+    m_robotDrive.setDefaultCommand(
+      new RunCommand(
+          () -> m_robotDrive.humanDrive(
+              -MathUtil.applyDeadband(flightJoystick.getY(), OIConstants.kDriveDeadband),
+              -MathUtil.applyDeadband(flightJoystick.getX(), OIConstants.kDriveDeadband),
+              Math.abs(-MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband)) > Math.abs(-MathUtil.applyDeadband(0.5*flightJoystick.getZ(), OIConstants.kDriveDeadband))?
+              -MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband) : -MathUtil.applyDeadband(0.5*flightJoystick.getZ(), OIConstants.kDriveDeadband),
+              true),
+          m_robotDrive)); 
+
+  /*   // Configure default commands
+    climber.setDefaultCommand(
+        new RunCommand(
+            () -> climber.stopClimber(),
+            climber)); */
 
     //TODO add back in for Water Tight
     //Elevator
@@ -166,102 +187,78 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    // put wheels in X
-    //X Button
-    new JoystickButton(m_driverController, Button.kX.value)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+    
+    new JoystickButton(flightJoystick, 11)
+      .whileTrue(new RunCommand(
+        () -> m_robotDrive.resetOdometry(new Pose2d(m_robotDrive.getBlue() ?
+        1 : 17, 4, Rotation2d.fromDegrees(m_robotDrive.getBlue() ?
+          0 : 180)))));
 
-    // resets Odom to 1, 1, 0
-    //Right Bumper
-    new JoystickButton(m_driverController, Button.kRightBumper.value)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.resetOdometry(new Pose2d(1, 1, Rotation2d.fromDegrees(0))), m_robotDrive));
+/* 
+    new JoystickButton(flightJoystick, 1)
+      .whileTrue(new RunCommand(
+        () -> m_robotDrive.setSlowDrive(true)))
+      .onFalse(new RunCommand(
+        () -> m_robotDrive.setSlowDrive(false))); */
 
+    new JoystickButton(flightJoystick, 1)
+      .onTrue(new InstantCommand(
+        () -> m_robotDrive.setSlowDrive(true)))
+      .onFalse(new InstantCommand(
+        () -> m_robotDrive.setSlowDrive(false)));
 
-///////////////////////////////////////////////////////
-/// 
-    //Processor
-    new JoystickButton(m_driverController, Button.kA.value)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.driveToProcessor(), 
-          m_robotDrive));
+    //robot relative drive    
+    new JoystickButton(flightJoystick,3)
+      .whileTrue(new RunCommand(
+        () -> m_robotDrive.humanDrive(
+          -MathUtil.applyDeadband(flightJoystick.getY(), OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(flightJoystick.getX(), OIConstants.kDriveDeadband),
+          Math.abs(-MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband)) > Math.abs(-MathUtil.applyDeadband(flightJoystick.getZ(), OIConstants.kDriveDeadband))?
+          -MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband) : -MathUtil.applyDeadband(flightJoystick.getZ(), OIConstants.kDriveDeadband), false)));
+    
 
-    //Left Reef
-    new JoystickButton(m_driverController, Button.kX.value)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.driveToReef(true), 
-          m_robotDrive));
-
-    //Right Reef
-    new JoystickButton(m_driverController, Button.kB.value)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.driveToReef(false), 
-          m_robotDrive));
-    //Coral Station
-    new JoystickButton(m_driverController, Button.kY.value)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.turnToCoralStation(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband)), 
-          m_robotDrive));
-    //North
-    new POVButton(m_driverController, 0)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.humanTurnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
-          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
-          0, 
-          true), 
-          m_robotDrive));
-    //West
-    new POVButton(m_driverController, 270)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.humanTurnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
-          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
-          90, 
-          true), 
-          m_robotDrive));
-    //East
-    new POVButton(m_driverController, 90)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.humanTurnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
-          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
-          270, 
-          true), 
-          m_robotDrive));
-    //South
-    new POVButton(m_driverController, 180)
-          .whileTrue(new RunCommand(
-            () -> m_robotDrive.humanTurnDrive(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband), 
-            -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband), 
-            180, 
-            true), 
-            m_robotDrive));
 ///////////////////////////////////////////////////////////////////////
-/*     //Processor
-    new POVButton(flighJoystick, 180)
+    //Processor//Lower Algae
+    new POVButton(flightJoystick, 180)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.driveToProcessor(), 
           m_robotDrive));
+/*     //tttttttttttttttttt
+    new POVButton(flightJoystick, 180)
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.driveToProcessor(), 
+          m_robotDrive))
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.driveToProcessor(), 
+          m_robotDrive));
+    //Processor
+    new POVButton(flightJoystick, 180)
+        .whileTrue((
+          (lift.getAlgaeMode()) ?
+          new RunCommand(() -> m_robotDrive.driveToProcessor(), lift);
+          :new RunCommand(
+            () -> m_robotDrive.driveToProcessor(), 
+            m_robotDrive);)
+          ); */
 
-    //Left Reef
-    new POVButton(flighJoystick, 270)
+    //Left Reef//Upper Algae
+    new POVButton(flightJoystick, 270)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.driveToReef(true), 
           m_robotDrive));
 
-    //Right Reef
-    new POVButton(flighJoystick, 90)
+    //Right Reef//Algae Processor
+    new POVButton(flightJoystick, 90)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.driveToReef(false), 
           m_robotDrive));
           
-    //Coral Station
-    new POVButton(flighJoystick, 0)
+    //Coral Station//Barge
+    new POVButton(flightJoystick, 0)
         .whileTrue(new RunCommand(
-          () -> m_robotDrive.turnToCoralStation(-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-          -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband)), 
-          m_robotDrive)); */
+          () -> m_robotDrive.turnToCoralStation(-MathUtil.applyDeadband(flightJoystick.getY(), OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(flightJoystick.getX(), OIConstants.kDriveDeadband)), 
+          m_robotDrive)); 
   }
 
   //TODO add back in for Water Tight
@@ -284,41 +281,68 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> feeder.reverseFeeder(), feeder))
         .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
 
-    // lower robot
+/*     // lower robot
     new JoystickButton(secondXboxController, Button.kBack.value)
-        .whileTrue(new RunCommand(() -> climber.climberOut(), climber))
-        .onFalse(new RunCommand(() -> climber.stopClimber(), climber));
+        .whileTrue(new RunCommand(() -> climber.climberOut(), climber));
     // raise robot
     new JoystickButton(secondXboxController, Button.kStart.value)
-        .whileTrue(new RunCommand(() -> climber.climberIn(), climber))
-        .onFalse(new RunCommand(() -> climber.stopClimber(), climber));
+        .whileTrue(new RunCommand(() -> climber.climberIn(), climber)); */
+
+
+    // set Algae mode
+    new JoystickButton(secondXboxController, Button.kStart.value)
+        .whileTrue(new RunCommand( () -> lift.setAlgaeMode(true), lift));
+
+    //new JoystickButton(secondXboxController, Button.kBack.value)
+    
+        
     //tilt low
     new JoystickButton(secondXboxController, Button.kLeftBumper.value)
-        .whileTrue(new RunCommand(() -> tiltCoral.tiltTo(10), tiltCoral));
+        .whileTrue(new RunCommand(() -> tiltCoral.tiltTo(22), tiltCoral));
     // tilt high
     new JoystickButton(secondXboxController, Button.kRightBumper.value)
-        .whileTrue(new RunCommand(() -> tiltCoral.tiltTo(90), tiltCoral));
+        .whileTrue(new RunCommand(() -> tiltCoral.tiltTo(95), tiltCoral));
 
-    //L4 Elevator
-    new POVButton(m_driverController, 0)
+/*     //L4 Elevator
+    new POVButton(secondXboxController, 0)
         .whileTrue(new RunCommand(
           () -> lift.lineUpL4(), 
           lift));
     //L3 Elevator
-    new POVButton(m_driverController, 270)
+    new POVButton(secondXboxController, 270)
       .whileTrue(new RunCommand(
         () -> lift.lineUpL3(), 
         lift));
     //L1 Elevator
-    new POVButton(m_driverController, 90)
+    new POVButton(secondXboxController, 90)
       .whileTrue(new RunCommand(
         () -> lift.lineUpL1(), 
         lift));
     //L2 Elevator
-    new POVButton(m_driverController, 180)
+    new POVButton(secondXboxController, 180)
       .whileTrue(new RunCommand(
         () -> lift.lineUpL2(), 
-        lift));
+        lift)); */
+    //L4 Elevator
+    new POVButton(secondXboxController, 0)
+        .whileTrue(new RunCommand(
+          () -> lift.choseActionTop(), 
+          lift));
+     //L3 Elevator
+     new POVButton(secondXboxController, 270)
+       .whileTrue(new RunCommand(
+         () -> lift.choseActionLeft(), 
+         lift));
+     //L1 Elevator
+     new POVButton(secondXboxController, 90)
+       .whileTrue(new RunCommand(
+         () -> lift.choseActionRight(),
+         lift));
+     //L2 Elevator
+     new POVButton(secondXboxController, 180)
+       .whileTrue(new RunCommand(
+         () -> lift.choseActionBottom(), 
+         lift)); 
 
   }
 

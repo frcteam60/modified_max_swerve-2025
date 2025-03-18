@@ -23,7 +23,9 @@ public final class Configs {
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     // TODO tune PIDlop
                     //.pidf(drivingVelocityFeedForward, steeringFactor, drivingFactor, drivingVelocityFeedForward)
-                    .pid(0.04, 0, 0);
+                    .pid(0.2, 0, 0)
+                    //import edu.wpi.first.wpilibj.Preferences;
+                    .outputRange(-0.09, 0.60, ClosedLoopSlot.kSlot0);
                     //.pid(0, 0, 0, ClosedLoopSlot.kSlot0);
                     //.pid(0, 0, 0, ClosedLoopSlot.kSlot1);
                     //.pid(1, 0, 0)
@@ -66,9 +68,12 @@ public final class Configs {
                     // These are example gains you may need to them for your own robot!
                     .iMaxAccum(0.0003)
                     //.pid(0.005, 0.0002, 2000)
-                    .pid(0.005, 0.0002, 2000, ClosedLoopSlot.kSlot0)
+                    .pid(0.02, 0.0002, 200, ClosedLoopSlot.kSlot0)
                     //.pid(0, 0, 0, ClosedLoopSlot.kSlot1);
-                    .outputRange(-0.1, 0.25, ClosedLoopSlot.kSlot0);
+                    .outputRange(-0.5, 1, ClosedLoopSlot.kSlot0)
+                    //Slot 1 up
+                    .pid(0.04, 0.0002, 100, ClosedLoopSlot.kSlot1)                    
+                    .outputRange(-0.5, 0.7, ClosedLoopSlot.kSlot1);
                     //p 0.01
                     //.pid(0.0, 0, 0)
         }

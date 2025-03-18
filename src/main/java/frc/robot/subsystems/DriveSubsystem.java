@@ -115,6 +115,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   boolean blue = true;
   boolean allianceYet = false;
+
+  boolean slowDrive = false;
   
   private final Vision piCam = new Vision();
 
@@ -201,6 +203,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    checkAllianceColor();
     // Update the odometry in the periodic block
     yaw = gyro.getYaw()*-1;
 
@@ -236,7 +239,7 @@ public class DriveSubsystem extends SubsystemBase {
     visionEst.ifPresent(
             // est seems to be standing in for EstimatedRobotPose gotten from getEstimatedGlobalPose()
             est -> {
-              System.out.println("Vision Est is present");
+              //System.out.println("Vision Est is present");
                 visionEstIsPresent = true;
                 testPose2d = est.estimatedPose.toPose2d();
                 SmartDashboard.putString("V Est pose", testPose2d.toString());
@@ -358,11 +361,11 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void humanDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative){
-    drive(
-      applySensitivity(xSpeed, Constants.posJoystickSensitivity), 
-      applySensitivity(ySpeed, Constants.posJoystickSensitivity), 
-      applySensitivity(rot, Constants.rotJoystickSensitivity), 
-      fieldRelative);
+    
+    drive(applySensitivity(-xSpeed, Constants.posJoystickSensitivity), 
+    applySensitivity(-ySpeed, Constants.posJoystickSensitivity), 
+    applySensitivity(rot, Constants.rotJoystickSensitivity), 
+    fieldRelative);
   
   }
 
@@ -376,13 +379,17 @@ public class DriveSubsystem extends SubsystemBase {
    *                      field.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    System.out.println(xSpeed);
+/*     System.out.println(xSpeed);
     System.out.println(ySpeed);
     System.out.println(rot);
-    System.out.println(fieldRelative);
+    System.out.println(fieldRelative); */
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    if(slowDrive){
+      xSpeedDelivered *= 0.5;
+      ySpeedDelivered *= 0.5;
+    }
     desiredRotAngle = getOdomHeading().getDegrees() + (rot*1);
     //double rotDelivered = (angleSubtractor(desiredRotAngle, getOdomHeading().getDegrees()))* 0.01 * DriveConstants.kMaxAngularSpeed;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
@@ -392,7 +399,7 @@ public class DriveSubsystem extends SubsystemBase {
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
                 //Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)))
                 Rotation2d.fromDegrees(yaw))
-            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+            : new ChassisSpeeds(-xSpeedDelivered, -ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     //System.out.println("zero"+ swerveModuleStates[0].toString());
@@ -557,10 +564,10 @@ public class DriveSubsystem extends SubsystemBase {
 
       if(distanceToTwelve < distanceToThirteen){
         //Twelve
-        turnDrive(xSpeed, ySpeed, 126, true);
+        turnDrive(xSpeed, ySpeed, 54, true);
       } else {
         //Thirteen
-        turnDrive(xSpeed, ySpeed, 234, true);
+        turnDrive(xSpeed, ySpeed, 306, true);
       }
     } else {
       double distanceToOne = getDistanceBetween(currentPose, FieldPositions.tag1);
@@ -592,6 +599,9 @@ public class DriveSubsystem extends SubsystemBase {
       desiredYSpeed = desiredYSpeed * 0.5;
       //5,5,2.5
     }
+
+    desiredXSpeed = desiredXSpeed *-1;
+    desiredYSpeed = desiredYSpeed *-1;
 
     if(Math.abs(desiredRotSpeed) < 3){
       desiredRotSpeed = 0;
@@ -662,6 +672,11 @@ public class DriveSubsystem extends SubsystemBase {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+
+    if(slowDrive){
+      xSpeedDelivered *= 0.5;
+      ySpeedDelivered *= 0.5;
+    }
     desiredRotAngle = desiredAngleDeg;
     double rotDelivered = (angleSubtractor(desiredAngleDeg, getOdomHeading().getDegrees()))* 0.01 * DriveConstants.kMaxAngularSpeed;
 
@@ -827,8 +842,8 @@ public class DriveSubsystem extends SubsystemBase {
     double newValue = Math.abs(orignalValue);
     newValue = Math.pow(newValue, sensitivity);
     newValue = Math.copySign(newValue, orignalValue);
-    System.out.println(orignalValue + "orignal value");
-    System.out.println(newValue + "newValue");
+    //System.out.println(orignalValue + "orignal value");
+    //System.out.println(newValue + "newValue");
     return newValue;
   }
 
@@ -837,6 +852,14 @@ public class DriveSubsystem extends SubsystemBase {
     double yDiffference = firstPosition.getY()-secondPosition.getY();
     return Math.abs(Math.sqrt((xDifference*xDifference)+(yDiffference*yDiffference)));
 
+  }
+
+  public boolean getBlue(){
+    return blue;
+  }
+
+  public void setSlowDrive(boolean wantSlow){
+    slowDrive = wantSlow;
   }
 
 }

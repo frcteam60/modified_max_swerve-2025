@@ -101,6 +101,8 @@ public class Elevator extends SubsystemBase {
 
   double runSpeed = 1;
   double downMultiplier = 0.05;
+
+  boolean algaeMode = false;
   //9.904806
   //three something at board height
   /*
@@ -169,6 +171,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void runElevator(double speed){
+    setAlgaeMode(false);
     if(elevatorOneEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
       elevatorOneMax.stopMotor();
       elevatorTwoMax.stopMotor();
@@ -187,6 +190,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setAtHeight(double desiredHeight){
+    SmartDashboard.putNumber("desired heigth", desiredHeight);
     elevatorOneClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
     elevatorTwoClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
          /* if(tiltEncoder.getPosition()>desiredPosition){
@@ -196,7 +200,34 @@ public class Elevator extends SubsystemBase {
      } */
   }
 
-  
+  public void choseActionTop(){
+    if(algaeMode){
+      bargeLineUp();
+    } else {
+      lineUpL4();
+    }
+  }
+  public void choseActionRight(){
+    if(algaeMode){
+      processorLineUp();
+    } else {
+      lineUpL1();
+    }
+  }
+  public void choseActionBottom(){
+    if(algaeMode){
+      lowerAlgae();
+    } else {
+      lineUpL2();
+    }
+  }
+  public void choseActionLeft(){
+    if(algaeMode){
+      upperAlgae();
+    } else {
+      lineUpL3();
+    }
+  }
   public void lineUpL4(){
     setAtHeight(L4Height);
   }
@@ -211,6 +242,28 @@ public class Elevator extends SubsystemBase {
   }
   public void lineUpL0(){
     setAtHeight(L0Height);
+  }
+  public void setAlgaeMode(boolean mode){
+    algaeMode = mode;
+  }
+
+  public void bargeLineUp(){
+    setAtHeight(28.5);
+  }
+  public void processorLineUp(){
+    setAtHeight(2.25);//6
+  }
+  public void upperAlgae(){
+    //19.6/
+    setAtHeight(18.7); // 55.4/51.7in/23.3
+  }
+  //divide by 2.22
+  public void lowerAlgae(){
+    //12.6
+    setAtHeight(12.6);//39.8 in /36 in/16.2
+  }
+  public boolean getAlgaeMode(){
+    return algaeMode;
   }
 
 }

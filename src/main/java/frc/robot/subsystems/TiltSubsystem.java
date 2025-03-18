@@ -28,7 +28,7 @@ public class TiltSubsystem extends SubsystemBase {
   private final double runSpeed = 0.8;
 
   //double lowerLimit = 7;
-  double lowerLimit = 10;
+  double lowerLimit = 3;
   //35
   double upperLimit = 95;
   //95
@@ -61,18 +61,18 @@ public class TiltSubsystem extends SubsystemBase {
 
 
   public void tiltEndEffector(double speed){
-    System.out.println(speed);
+   //System.out.println(speed);
    if(tiltEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
-    System.out.println("A");
+    //System.out.println("A");
       tiltMax.stopMotor();
     } else if (tiltEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
-      System.out.println("B");
+      //System.out.println("B");
       tiltMax.stopMotor();
     } else{
-      System.out.println("C");
+      //System.out.println("C");
       tiltMax.set(speed);
-    } 
-    //tiltMax.set(speed);
+    }
+    //tiltMax.set(speed*0.25);
   }
 
   public void tiltStop(){
@@ -80,16 +80,23 @@ public class TiltSubsystem extends SubsystemBase {
   }
 
   public void tiltTo(double desiredPosition){
-    System.out.println("desired position" + desiredPosition);
-    if(tiltEncoder.getPosition() <= (20+lowerLimit) && (desiredPosition <=(20+lowerLimit))){ 
-     System.out.println("A");
+    SmartDashboard.putNumber("desiredtilt", desiredPosition);
+    //System.out.println("desired position" + desiredPosition);
+    if(tiltEncoder.getPosition() <= (lowerLimit) && (desiredPosition <=(lowerLimit))){ 
+     //System.out.println("A");
        tiltMax.stopMotor();
-     } else if (tiltEncoder.getPosition() >= (upperLimit-20) && (desiredPosition >= (upperLimit-20))){
-       System.out.println("B");
+     } else if (tiltEncoder.getPosition() >= (upperLimit) && (desiredPosition >= (upperLimit))){
+       //System.out.println("B");
        tiltMax.stopMotor();
      } else{
-       System.out.println("C");
-       tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+       //System.out.println("C");
+       if (desiredPosition > tiltEncoder.getPosition()){
+        //Up 
+        tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot1);
+       }else{
+        //down
+        tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
+       }
      }
 
      /* if(tiltEncoder.getPosition()>desiredPosition){
@@ -102,6 +109,7 @@ public class TiltSubsystem extends SubsystemBase {
 
   public void showEncoders(){
     SmartDashboard.putNumber("End Effector angle", tiltEncoder.getPosition());
+    SmartDashboard.putNumber("EndEffectorSpeed", tiltEncoder.getVelocity());
   }
 
   public void stopTilt(){
@@ -123,4 +131,6 @@ public class TiltSubsystem extends SubsystemBase {
   public void lineUpL0(){
     tiltTo(L0Angle);
   }
+
+  
 }

@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeSubsystem extends SubsystemBase {
 
-  private final double runSpeed = 0.8;
+  private final double runSpeed = 1;
 
   private final SparkMax leftAlgaeMax,rightAlgaeMax;
   private final RelativeEncoder leftAlgaeEncoder,rightAlgaeEncoder;

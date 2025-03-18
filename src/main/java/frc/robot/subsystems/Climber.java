@@ -63,7 +63,7 @@ public class Climber extends SubsystemBase {
     climberOne.setNeutralMode(NeutralMode.Brake);
 
     climberTwo = new WPI_TalonSRX(ClimberConstants.climberTwoCANID);
-    climberTwo.setSafetyEnabled(true);
+    climberTwo.setSafetyEnabled(false);
     climberTwo.setNeutralMode(NeutralMode.Brake);
     climberTwo.follow(climberOne);
 
@@ -107,7 +107,7 @@ public class Climber extends SubsystemBase {
 
   public void stopClimber(){
     climberOne.stopMotor();
-    climberTwo.stopMotor();
+    // climberTwo.stopMotor();
 
   }
 
