@@ -40,6 +40,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.TiltSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -97,6 +98,20 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    //Auto Commands
+    NamedCommands.registerCommand("Elevator to L4", 
+    Command.run(() -> lift.lineUpL4(), lift));
+
+    NamedCommands.registerCommand("Coral angle L4", 
+    Commands.run(() -> tiltCoral.lineUpL4(), tiltCoral));
+
+    NamedCommands.registerCommand("release coral", 
+    Commands.run(() -> coral.coralExpel(), coral));
+
+
+
+
+
     // Configure the button bindings
     configureButtonBindings();
     //TODO add back in for Water Tight
@@ -441,13 +456,4 @@ public class RobotContainer {
     m_robotDrive.setEncoder();
   }
 
-  double applySensitivity(double orignalValue, double sensitivity){
-    //absolute value of value raised to 1/sensitivity, then sign reaplied
-    double newValue = Math.abs(orignalValue);
-    newValue = Math.pow(newValue, sensitivity/1);
-    newValue = Math.copySign(newValue, orignalValue);
-    //System.out.println(orignalValue + "orignal value");
-    //System.out.println(newValue + "newValue");
-    return newValue;
-  }
 }

@@ -189,10 +189,16 @@ public class Elevator extends SubsystemBase {
 
   }
 
-  public void setAtHeight(double desiredHeight){
+  public boolean setAtHeight(double desiredHeight){
+    boolean isAtHeight = false;
     SmartDashboard.putNumber("desired heigth", desiredHeight);
     elevatorOneClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
     elevatorTwoClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
+
+    if (Math.abs(desiredHeight - elevatorOneEncoder.getPosition()) < 1){
+      isAtHeight = true;
+    } 
+    return isAtHeight;
          /* if(tiltEncoder.getPosition()>desiredPosition){
       tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
      } else {
@@ -228,20 +234,25 @@ public class Elevator extends SubsystemBase {
       lineUpL3();
     }
   }
-  public void lineUpL4(){
-    setAtHeight(L4Height);
+  public boolean lineUpL4(){
+    boolean isAtHeight = setAtHeight(L4Height);
+    return isAtHeight;
   }
-  public void lineUpL3(){
-    setAtHeight(L3Height);
+  public boolean lineUpL3(){
+    boolean isAtHeight = setAtHeight(L3Height);
+    return isAtHeight;
   }
-  public void lineUpL2(){
-    setAtHeight(L2Height);
+  public boolean lineUpL2(){
+    boolean isAtHeight = setAtHeight(L2Height);
+    return isAtHeight;
   }
-  public void lineUpL1(){
-    setAtHeight(L1Height);
+  public boolean lineUpL1(){
+    boolean isAtHeight = setAtHeight(L1Height);
+    return isAtHeight;
   }
-  public void lineUpL0(){
-    setAtHeight(L0Height);
+  public boolean lineUpL0(){
+    boolean isAtHeight = setAtHeight(L0Height);
+    return isAtHeight;
   }
   public void setAlgaeMode(boolean mode){
     algaeMode = mode;
