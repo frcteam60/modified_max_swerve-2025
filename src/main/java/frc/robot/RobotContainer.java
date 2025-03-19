@@ -71,7 +71,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  //TODO add in for Water Tight
+  //TODO add in for OYDS
   private final Elevator lift = new Elevator();
   private final AlgaeSubsystem algae = new AlgaeSubsystem();
   private final CoralSubsystem coral = new CoralSubsystem();
@@ -86,7 +86,7 @@ public class RobotContainer {
 
   // The secondary controller
   //port one
-  //TODO add back in for Water Tight
+  //TODO add back in for OYDS
   XboxController secondXboxController = new XboxController(OIConstants.kSecondControllerPort);
 
   Joystick flightJoystick = new Joystick(2);
@@ -100,36 +100,27 @@ public class RobotContainer {
   public RobotContainer() {
     //Auto Commands
     NamedCommands.registerCommand("Elevator to L4", 
-    Command.run(() -> lift.lineUpL4(), lift));
+      Commands.run(() -> lift.lineUpL4(), lift)
+        .until(() -> lift.checkCorrectHeight()));
 
     NamedCommands.registerCommand("Coral angle L4", 
-    Commands.run(() -> tiltCoral.lineUpL4(), tiltCoral));
+    Commands.run(() -> tiltCoral.lineUpL4(), tiltCoral)
+     .withTimeout(2));
 
     NamedCommands.registerCommand("release coral", 
-    Commands.run(() -> coral.coralExpel(), coral));
+    Commands.run(() -> coral.coralExpel(), coral)
+      .withTimeout(2));
 
-
-
+    NamedCommands.registerCommand("Elevator to home", 
+      Commands.run(() -> lift.setAtHeight(3), lift)
+        .until(() -> lift.checkCorrectHeight()));
 
 
     // Configure the button bindings
     configureButtonBindings();
-    //TODO add back in for Water Tight
+    //TODO add back in for OYDS
     configureSecondaryButtonBindings();
 
-/*     // Configure default commands
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.humanDrive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true),
-            m_robotDrive)); */
-
-    // Configure default commands
 /*     m_robotDrive.setDefaultCommand(
         new RunCommand(
             () -> m_robotDrive.humanDrive(
@@ -156,7 +147,7 @@ public class RobotContainer {
             () -> climber.stopClimber(),
             climber)); */
 
-    //TODO add back in for Water Tight
+    //TODO add back in for OYDS
     //Elevator
     lift.setDefaultCommand(
       new RunCommand(
@@ -164,7 +155,7 @@ public class RobotContainer {
         lift)
     );
 
-    //TODO add back in for Water Tight
+    //TODO add back in for OYDS
     // tilt coral
     tiltCoral.setDefaultCommand(
       new RunCommand(
@@ -172,7 +163,7 @@ public class RobotContainer {
         tiltCoral)
     );
 
-    //TODO add back in for Water Tight
+    //TODO add back in for OYDS
     // coral wheel
     coral.setDefaultCommand(
       new RunCommand(
@@ -276,7 +267,7 @@ public class RobotContainer {
           m_robotDrive)); 
   }
 
-  //TODO add back in for Water Tight
+  //TODO add back in for OYDS
   private void configureSecondaryButtonBindings() {
     // algae in
     new JoystickButton(secondXboxController, Button.kY.value)

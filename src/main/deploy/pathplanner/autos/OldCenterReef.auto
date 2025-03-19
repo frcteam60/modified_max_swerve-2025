@@ -5,7 +5,7 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -24,13 +24,13 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "NewCenterReef"
+                  "pathName": "CenterReef"
                 }
               },
               {
@@ -56,6 +56,12 @@
                 "type": "named",
                 "data": {
                   "name": "Elevator to L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Coral angle L4"
                 }
               },
               {

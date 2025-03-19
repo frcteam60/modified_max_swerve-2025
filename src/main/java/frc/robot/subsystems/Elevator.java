@@ -103,6 +103,7 @@ public class Elevator extends SubsystemBase {
   double downMultiplier = 0.05;
 
   boolean algaeMode = false;
+  boolean isAtHeight = false;
   //9.904806
   //three something at board height
   /*
@@ -190,14 +191,16 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean setAtHeight(double desiredHeight){
-    boolean isAtHeight = false;
+    
     SmartDashboard.putNumber("desired heigth", desiredHeight);
     elevatorOneClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
     elevatorTwoClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
 
-    if (Math.abs(desiredHeight - elevatorOneEncoder.getPosition()) < 1){
+    if (Math.abs(desiredHeight - elevatorOneEncoder.getPosition()) <= 1){
       isAtHeight = true;
-    } 
+    } else {
+      isAtHeight = false;
+    }
     return isAtHeight;
          /* if(tiltEncoder.getPosition()>desiredPosition){
       tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
@@ -234,25 +237,23 @@ public class Elevator extends SubsystemBase {
       lineUpL3();
     }
   }
-  public boolean lineUpL4(){
-    boolean isAtHeight = setAtHeight(L4Height);
-    return isAtHeight;
+  public void lineUpL4(){
+    isAtHeight = setAtHeight(L4Height);
   }
-  public boolean lineUpL3(){
-    boolean isAtHeight = setAtHeight(L3Height);
-    return isAtHeight;
+  public void lineUpL3(){
+    isAtHeight = setAtHeight(L3Height);
   }
-  public boolean lineUpL2(){
-    boolean isAtHeight = setAtHeight(L2Height);
-    return isAtHeight;
+  public void lineUpL2(){
+    isAtHeight = setAtHeight(L2Height);
+    
   }
-  public boolean lineUpL1(){
-    boolean isAtHeight = setAtHeight(L1Height);
-    return isAtHeight;
+  public void lineUpL1(){
+    isAtHeight = setAtHeight(L1Height);
+    
   }
-  public boolean lineUpL0(){
-    boolean isAtHeight = setAtHeight(L0Height);
-    return isAtHeight;
+  public void lineUpL0(){
+    isAtHeight = setAtHeight(L0Height);
+    
   }
   public void setAlgaeMode(boolean mode){
     algaeMode = mode;
@@ -275,6 +276,10 @@ public class Elevator extends SubsystemBase {
   }
   public boolean getAlgaeMode(){
     return algaeMode;
+  }
+  
+  public boolean checkCorrectHeight(){
+    return isAtHeight;
   }
 
 }

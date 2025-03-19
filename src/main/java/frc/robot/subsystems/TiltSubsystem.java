@@ -34,6 +34,8 @@ public class TiltSubsystem extends SubsystemBase {
   //95
   //19.5945
 
+  boolean atDesiredTilt = false;
+
   //TODO get these angles
   double L4Angle = 90;
   double L3Angle = 95;
@@ -98,6 +100,8 @@ public class TiltSubsystem extends SubsystemBase {
         tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
        }
      }
+
+     
 
      /* if(tiltEncoder.getPosition()>desiredPosition){
       tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0);
