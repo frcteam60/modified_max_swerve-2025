@@ -194,6 +194,14 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     
+/*     // lower robot
+    new JoystickButton(secondXboxController, Button.kBack.value)
+        .whileTrue(new RunCommand(() -> climber.climberOut(), climber));
+    // raise robot
+    new JoystickButton(secondXboxController, Button.kStart.value)
+        .whileTrue(new RunCommand(() -> climber.climberIn(), climber)); */
+
+    //reset odom
     new JoystickButton(flightJoystick, 11)
       .whileTrue(new RunCommand(
         () -> m_robotDrive.resetOdometry(new Pose2d(m_robotDrive.getBlue() ?
@@ -206,7 +214,7 @@ public class RobotContainer {
         () -> m_robotDrive.setSlowDrive(true)))
       .onFalse(new RunCommand(
         () -> m_robotDrive.setSlowDrive(false))); */
-
+    //slow speed
     new JoystickButton(flightJoystick, 1)
       .onTrue(new InstantCommand(
         () -> m_robotDrive.setSlowDrive(true)))
@@ -221,45 +229,26 @@ public class RobotContainer {
           -MathUtil.applyDeadband(flightJoystick.getX(), OIConstants.kDriveDeadband),
           Math.abs(-MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband)) > Math.abs(-MathUtil.applyDeadband(flightJoystick.getZ(), OIConstants.kDriveDeadband))?
           -MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband) : -MathUtil.applyDeadband(flightJoystick.getZ(), OIConstants.kDriveDeadband), false)));
-    
 
-///////////////////////////////////////////////////////////////////////
-    //Processor//Lower Algae
-    new POVButton(flightJoystick, 180)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.driveToProcessor(), 
-          m_robotDrive));
-/*     //tttttttttttttttttt
-    new POVButton(flightJoystick, 180)
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.driveToProcessor(), 
-          m_robotDrive))
-        .whileTrue(new RunCommand(
-          () -> m_robotDrive.driveToProcessor(), 
-          m_robotDrive));
     //Processor
     new POVButton(flightJoystick, 180)
-        .whileTrue((
-          (lift.getAlgaeMode()) ?
-          new RunCommand(() -> m_robotDrive.driveToProcessor(), lift);
-          :new RunCommand(
-            () -> m_robotDrive.driveToProcessor(), 
-            m_robotDrive);)
-          ); */
+        .whileTrue(new RunCommand(
+          () -> m_robotDrive.driveToProcessor(), 
+          m_robotDrive));
 
-    //Left Reef//Upper Algae
+    //Left Reef
     new POVButton(flightJoystick, 270)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.driveToReef(true), 
           m_robotDrive));
 
-    //Right Reef//Algae Processor
+    //Right Reef
     new POVButton(flightJoystick, 90)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.driveToReef(false), 
           m_robotDrive));
           
-    //Coral Station//Barge
+    //Coral Station
     new POVButton(flightJoystick, 0)
         .whileTrue(new RunCommand(
           () -> m_robotDrive.turnToCoralStation(-MathUtil.applyDeadband(flightJoystick.getY(), OIConstants.kDriveDeadband),
@@ -270,46 +259,36 @@ public class RobotContainer {
   //TODO add back in for OYDS
   private void configureSecondaryButtonBindings() {
     // algae in
-    new JoystickButton(secondXboxController, Button.kY.value)
+    new JoystickButton(secondXboxController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(() -> algae.algaeIntake(), algae))
         .onFalse(new RunCommand(()->algae.algaeStop(), algae));
     // algae out
-    new JoystickButton(secondXboxController, Button.kB.value)
+    new JoystickButton(secondXboxController, Button.kLeftBumper.value)
         .whileTrue(new RunCommand(() -> algae.algaeExpel(), algae))
         .onFalse(new RunCommand(() -> algae.algaeStop(), algae));
 
     //feeder to front
-    new JoystickButton(secondXboxController, Button.kX.value)
+    new JoystickButton(secondXboxController, Button.kStart.value)
         .whileTrue(new RunCommand(() -> feeder.runFeeder(), feeder))
         .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
     // reverse feeder
-    new JoystickButton(secondXboxController, Button.kA.value)
+    new JoystickButton(secondXboxController, Button.kBack.value)
         .whileTrue(new RunCommand(() -> feeder.reverseFeeder(), feeder))
         .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
 
-/*     // lower robot
-    new JoystickButton(secondXboxController, Button.kBack.value)
-        .whileTrue(new RunCommand(() -> climber.climberOut(), climber));
-    // raise robot
+/*     // set Algae mode
     new JoystickButton(secondXboxController, Button.kStart.value)
-        .whileTrue(new RunCommand(() -> climber.climberIn(), climber)); */
-
-
-    // set Algae mode
-    new JoystickButton(secondXboxController, Button.kStart.value)
-        .whileTrue(new RunCommand( () -> lift.setAlgaeMode(true), lift));
-
-    //new JoystickButton(secondXboxController, Button.kBack.value)
-    
+        .whileTrue(new RunCommand( () -> lift.setAlgaeMode(true), lift)); */
+  
         
-    //tilt low
+/*     //tilt low
     new JoystickButton(secondXboxController, Button.kLeftBumper.value)
         .whileTrue(new RunCommand(() -> tiltCoral.tiltTo(22), tiltCoral));
     // tilt high
     new JoystickButton(secondXboxController, Button.kRightBumper.value)
-        .whileTrue(new RunCommand(() -> tiltCoral.tiltTo(95), tiltCoral));
+        .whileTrue(new RunCommand(() -> tiltCoral.tiltTo(95), tiltCoral)); */
 
-/*     //L4 Elevator
+    //L4 Elevator
     new POVButton(secondXboxController, 0)
         .whileTrue(new RunCommand(
           () -> lift.lineUpL4(), 
@@ -328,28 +307,57 @@ public class RobotContainer {
     new POVButton(secondXboxController, 180)
       .whileTrue(new RunCommand(
         () -> lift.lineUpL2(), 
-        lift)); */
-    //L4 Elevator
+        lift));
+
+    //L4 tilt
     new POVButton(secondXboxController, 0)
         .whileTrue(new RunCommand(
-          () -> lift.choseActionTop(), 
-          lift));
-     //L3 Elevator
-     new POVButton(secondXboxController, 270)
-       .whileTrue(new RunCommand(
-         () -> lift.choseActionLeft(), 
-         lift));
-     //L1 Elevator
-     new POVButton(secondXboxController, 90)
-       .whileTrue(new RunCommand(
-         () -> lift.choseActionRight(),
-         lift));
-     //L2 Elevator
-     new POVButton(secondXboxController, 180)
-       .whileTrue(new RunCommand(
-         () -> lift.choseActionBottom(), 
-         lift)); 
+          () -> tiltCoral.lineUpL4(), 
+          tiltCoral));
+    //L3 tilt
+    new POVButton(secondXboxController, 270)
+      .whileTrue(new RunCommand(
+        () -> tiltCoral.lineUpL3(), 
+        tiltCoral));
+    //L1 tilt
+    new POVButton(secondXboxController, 90)
+      .whileTrue(new RunCommand(
+        () -> tiltCoral.lineUpL1(), 
+        tiltCoral));
+    //L2 tilt
+    new POVButton(secondXboxController, 180)
+      .whileTrue(new RunCommand(
+        () -> tiltCoral.lineUpL2(), 
+        tiltCoral));
 
+
+    //algae levels elevator
+    //Barge
+    new JoystickButton(secondXboxController, Button.kY.value)
+      .whileTrue(new RunCommand(() -> lift.bargeLineUp(), lift));
+    //Processor
+    new JoystickButton(secondXboxController, Button.kB.value)
+      .whileTrue(new RunCommand(() -> lift.processorLineUp(), lift));
+    //lower algae
+    new JoystickButton(secondXboxController, Button.kA.value)
+      .whileTrue(new RunCommand(() -> lift.lowerAlgae(), lift));
+    // upper algae
+    new JoystickButton(secondXboxController, Button.kX.value)
+      .whileTrue(new RunCommand(() -> lift.upperAlgae(), lift));
+
+    //algae tilt
+    //Barge
+    new JoystickButton(secondXboxController, Button.kY.value)
+      .whileTrue(new RunCommand(() -> tiltCoral.lineUpBarge(), tiltCoral));
+    //Processor
+    new JoystickButton(secondXboxController, Button.kB.value)
+      .whileTrue(new RunCommand(() -> tiltCoral.lineUpProcessor(), tiltCoral));
+    //lower algae
+    new JoystickButton(secondXboxController, Button.kA.value)
+      .whileTrue(new RunCommand(() -> tiltCoral.lineUpLowerAlgae(), tiltCoral));
+    // upper algae
+    new JoystickButton(secondXboxController, Button.kX.value)
+      .whileTrue(new RunCommand(() -> tiltCoral.lineUpUpperAlgae(), tiltCoral));
   }
 
 

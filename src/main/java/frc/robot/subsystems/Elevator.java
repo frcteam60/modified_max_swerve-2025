@@ -209,34 +209,7 @@ public class Elevator extends SubsystemBase {
      } */
   }
 
-  public void choseActionTop(){
-    if(algaeMode){
-      bargeLineUp();
-    } else {
-      lineUpL4();
-    }
-  }
-  public void choseActionRight(){
-    if(algaeMode){
-      processorLineUp();
-    } else {
-      lineUpL1();
-    }
-  }
-  public void choseActionBottom(){
-    if(algaeMode){
-      lowerAlgae();
-    } else {
-      lineUpL2();
-    }
-  }
-  public void choseActionLeft(){
-    if(algaeMode){
-      upperAlgae();
-    } else {
-      lineUpL3();
-    }
-  }
+
   public void lineUpL4(){
     isAtHeight = setAtHeight(L4Height);
   }
@@ -249,12 +222,12 @@ public class Elevator extends SubsystemBase {
   }
   public void lineUpL1(){
     isAtHeight = setAtHeight(L1Height);
-    
   }
   public void lineUpL0(){
     isAtHeight = setAtHeight(L0Height);
-    
   }
+
+
   public void setAlgaeMode(boolean mode){
     algaeMode = mode;
   }

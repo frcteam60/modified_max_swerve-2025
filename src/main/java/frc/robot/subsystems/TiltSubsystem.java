@@ -43,6 +43,13 @@ public class TiltSubsystem extends SubsystemBase {
   double L2Angle = 95;
   double L1Angle = 90;
   double L0Angle = 5;
+
+
+  //TODO fix these angles
+  double upperAlgae = 36;
+  double lowerAlgae = 36;
+  double barge = 95;
+  double processor = 36;
  
   /** Creates a new CoralSubsystem. */
   public TiltSubsystem() {
@@ -124,7 +131,7 @@ public class TiltSubsystem extends SubsystemBase {
   public void lineUpL4(){
     tiltTo(L4Angle);
   }
-  public void lineUp3(){
+  public void lineUpL3(){
     tiltTo(L3Angle);
   }
   public void lineUpL2(){
@@ -137,5 +144,16 @@ public class TiltSubsystem extends SubsystemBase {
     tiltTo(L0Angle);
   }
 
-  
+  public void lineUpBarge(){
+    tiltTo(barge);
+  }
+  public void lineUpProcessor(){
+    tiltTo(processor);
+  }
+  public void lineUpLowerAlgae(){
+    tiltTo(lowerAlgae);
+  }
+  public void lineUpUpperAlgae(){
+    tiltTo(upperAlgae);
+  }
 }
