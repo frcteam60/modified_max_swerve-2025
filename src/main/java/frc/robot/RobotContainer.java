@@ -76,7 +76,7 @@ public class RobotContainer {
   private final AlgaeSubsystem algae = new AlgaeSubsystem();
   private final CoralSubsystem coral = new CoralSubsystem();
   private final TiltSubsystem tiltCoral = new TiltSubsystem();
-  private final FeederSubsystem feeder = new FeederSubsystem();
+  //private final FeederSubsystem feeder = new FeederSubsystem();
   //private final Climber climber = new Climber();
 
 
@@ -131,6 +131,8 @@ public class RobotContainer {
             m_robotDrive)); */
 
     // Configure default commands
+
+    //Teleop drive
     m_robotDrive.setDefaultCommand(
       new RunCommand(
           () -> m_robotDrive.humanDrive(
@@ -266,15 +268,15 @@ public class RobotContainer {
     new JoystickButton(secondXboxController, Button.kLeftBumper.value)
         .whileTrue(new RunCommand(() -> algae.algaeExpel(), algae))
         .onFalse(new RunCommand(() -> algae.algaeStop(), algae));
-
-    //feeder to front
+//TODO add feeder back in
+/*     //feeder to front
     new JoystickButton(secondXboxController, Button.kStart.value)
         .whileTrue(new RunCommand(() -> feeder.runFeeder(), feeder))
         .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
     // reverse feeder
     new JoystickButton(secondXboxController, Button.kBack.value)
         .whileTrue(new RunCommand(() -> feeder.reverseFeeder(), feeder))
-        .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder));
+        .onFalse(new RunCommand(() -> feeder.stopFeeder(), feeder)); */
 
 /*     // set Algae mode
     new JoystickButton(secondXboxController, Button.kStart.value)
