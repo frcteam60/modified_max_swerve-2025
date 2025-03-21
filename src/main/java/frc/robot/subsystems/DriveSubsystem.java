@@ -547,6 +547,112 @@ public class DriveSubsystem extends SubsystemBase {
     return linedUp;
   }
 
+  public boolean driveToAlgaeReef(){
+    //find closest reef april tag
+    double closestTarget;
+    Pose2d currentPose = getPose();
+    double distanceToTarget;
+    Pose2d desiredPosition;
+    boolean linedUp = false;
+
+    if(blue){
+      double distanceToSeventeen = getDistanceBetween(currentPose, FieldPositions.tag17);
+      double distanceToEighteen = getDistanceBetween(currentPose, FieldPositions.tag18);
+      double distanceToNineteen = getDistanceBetween(currentPose, FieldPositions.tag19);
+      double distanceToTwenty = getDistanceBetween(currentPose, FieldPositions.tag20);
+      double distanceToTwentyOne = getDistanceBetween(currentPose, FieldPositions.tag21);
+      double distanceToTwentyTwo = getDistanceBetween(currentPose, FieldPositions.tag22);
+
+      distanceToTarget = distanceToSeventeen;
+      if(left){
+        desiredPosition = FieldPositions.leftTag17;
+      } else {
+        desiredPosition = FieldPositions.rightTag17;
+      }
+
+      if(distanceToSeventeen > distanceToEighteen){
+        distanceToTarget = distanceToEighteen;
+        //TODO find desired positions
+        desiredPosition = 
+      }
+
+      if(distanceToTarget > distanceToNineteen){
+        distanceToTarget = distanceToNineteen;
+        //TODO find desired positions
+        desiredPosition = 
+      }
+
+      if(distanceToTarget > distanceToTwenty){
+        distanceToTarget = distanceToTwenty;
+         //TODO find desired positions
+         desiredPosition = 
+      }
+
+      if(distanceToTarget > distanceToTwentyOne){
+        distanceToTarget = distanceToTwentyOne;
+        //TODO find desired positions
+        desiredPosition = 
+      }
+
+      if(distanceToTarget > distanceToTwentyTwo){
+        distanceToTarget = distanceToTwentyTwo;
+        //TODO find desired positions
+        desiredPosition = 
+
+      }
+    } else { //if red
+      //6, 7, 8, 9, 10 ,11
+      double distanceToSix = getDistanceBetween(currentPose, FieldPositions.tag6);
+      double distanceToSeven = getDistanceBetween(currentPose, FieldPositions.tag7);
+      double distanceToEight = getDistanceBetween(currentPose, FieldPositions.tag8);
+      double distanceToNine = getDistanceBetween(currentPose, FieldPositions.tag9);
+      double distanceToTen = getDistanceBetween(currentPose, FieldPositions.tag10);
+      double distanceToEleven = getDistanceBetween(currentPose, FieldPositions.tag11);
+
+      distanceToTarget = distanceToSix;
+      if(left){
+        desiredPosition = FieldPositions.leftTag6;
+      } else {
+        desiredPosition = FieldPositions.rightTag6;
+      }
+
+      if(distanceToSix > distanceToSeven){
+        distanceToTarget = distanceToSeven;
+        //TODO find desired positions
+        desiredPosition =   
+      }
+      if(distanceToTarget > distanceToEight){
+        distanceToTarget = distanceToEight;
+        //TODO find desired positions
+        desiredPosition = 
+      }
+      if(distanceToTarget > distanceToNine){
+        distanceToTarget = distanceToNine;
+        //TODO find desired positions
+        desiredPosition = 
+      }
+      if(distanceToTarget > distanceToTen){
+        distanceToTarget = distanceToTen;
+        //TODO find desired positions
+        desiredPosition = 
+      }
+      if(distanceToTarget > distanceToEleven){
+        distanceToTarget = distanceToEleven;
+        //TODO find desired positions
+        desiredPosition = 
+
+      }
+    }
+
+    if(getDistanceBetween(currentPose, desiredPosition) < 0.0254){
+      linedUp = true;
+    } 
+
+    driveToPosition(desiredPosition);
+
+    return linedUp;
+  }
+
   public void driveToProcessor(){
     if(blue){
       driveToPosition(new Pose2d(5.987542,	0.45339, Rotation2d.fromDegrees(270)));

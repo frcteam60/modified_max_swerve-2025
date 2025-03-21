@@ -281,5 +281,25 @@ public final class Constants {
     public static final Pose2d rightTag21 = new Pose2d(5.778246,	4.191, Rotation2d.fromDegrees(180));
     public static final Pose2d rightTag22 = new Pose2d(5.276320794,	2.992921185, Rotation2d.fromDegrees(120));
 
+
+    //Algae lineup spots
+    //Red reef
+    public static final Pose2d algaeTag6 = new Pose2d(13.703046,	3.702264815, Rotation2d.fromDegrees(120));
+    public static final Pose2d algaeTag7 = new Pose2d(14.347698, 4.0259, Rotation2d.fromDegrees(180));
+    public static final Pose2d algaeTag8 = new Pose2d(13.703046,	4.349535185, Rotation2d.fromDegrees(240));
+    public static final Pose2d algaeTag9 = new Pose2d(12.414758,	4.349535185, Rotation2d.fromDegrees(300));
+    public static final Pose2d algaeTag10 = new Pose2d(11.770106,	4.0259, Rotation2d.fromDegrees(0));
+    public static final Pose2d algaeTag11 = new Pose2d(12.414758,	3.702264815, Rotation2d.fromDegrees(60));
+    //Rotation2d.fromDegrees()
+
+    //Algae lineup spots
+    //Blue reef
+    public static final Pose2d algaeTag17 = new Pose2d(3.845306,	3.702264815, Rotation2d.fromDegrees(60));
+    public static final Pose2d algaeTag18 = new Pose2d(3.2004,	4.0259, Rotation2d.fromDegrees(0));
+    public static final Pose2d algaeTag19 = new Pose2d(3.845306,	4.349535185, Rotation2d.fromDegrees(300));
+    public static final Pose2d algaeTag20 = new Pose2d(5.13334,	4.349535185, Rotation2d.fromDegrees(240));
+    public static final Pose2d algaeTag21 = new Pose2d(5.778246,	4.0259, Rotation2d.fromDegrees(180));
+    public static final Pose2d algaeTag22 = new Pose2d(5.13334,	3.702264815, Rotation2d.fromDegrees(120));
+
   }
 }
