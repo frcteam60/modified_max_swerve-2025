@@ -45,7 +45,9 @@ import edu.wpi.first.wpilibj.Timer;
 import java.util.Optional;
 
 import java.lang.invoke.VolatileCallSite;
+import java.lang.reflect.Field;
 import java.security.PublicKey;
+import java.text.FieldPosition;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -556,6 +558,7 @@ public class DriveSubsystem extends SubsystemBase {
     boolean linedUp = false;
 
     if(blue){
+      //finds distance to tags
       double distanceToSeventeen = getDistanceBetween(currentPose, FieldPositions.tag17);
       double distanceToEighteen = getDistanceBetween(currentPose, FieldPositions.tag18);
       double distanceToNineteen = getDistanceBetween(currentPose, FieldPositions.tag19);
@@ -563,45 +566,38 @@ public class DriveSubsystem extends SubsystemBase {
       double distanceToTwentyOne = getDistanceBetween(currentPose, FieldPositions.tag21);
       double distanceToTwentyTwo = getDistanceBetween(currentPose, FieldPositions.tag22);
 
+      // sets desired position to closest reef side on 
       distanceToTarget = distanceToSeventeen;
-      if(left){
-        desiredPosition = FieldPositions.leftTag17;
-      } else {
-        desiredPosition = FieldPositions.rightTag17;
-      }
+      desiredPosition = FieldPositions.algaeTag17;
 
       if(distanceToSeventeen > distanceToEighteen){
         distanceToTarget = distanceToEighteen;
-        //TODO find desired positions
-        desiredPosition = 
+        desiredPosition = FieldPositions.algaeTag18;
       }
 
       if(distanceToTarget > distanceToNineteen){
         distanceToTarget = distanceToNineteen;
-        //TODO find desired positions
-        desiredPosition = 
+        desiredPosition = FieldPositions.algaeTag19;
       }
 
       if(distanceToTarget > distanceToTwenty){
         distanceToTarget = distanceToTwenty;
-         //TODO find desired positions
-         desiredPosition = 
+         desiredPosition = FieldPositions.algaeTag20;
       }
 
       if(distanceToTarget > distanceToTwentyOne){
         distanceToTarget = distanceToTwentyOne;
-        //TODO find desired positions
-        desiredPosition = 
+        desiredPosition = FieldPositions.algaeTag21;
       }
 
       if(distanceToTarget > distanceToTwentyTwo){
         distanceToTarget = distanceToTwentyTwo;
-        //TODO find desired positions
-        desiredPosition = 
+        desiredPosition = FieldPositions.algaeTag22;
 
       }
     } else { //if red
       //6, 7, 8, 9, 10 ,11
+      //finds distance to reef tags
       double distanceToSix = getDistanceBetween(currentPose, FieldPositions.tag6);
       double distanceToSeven = getDistanceBetween(currentPose, FieldPositions.tag7);
       double distanceToEight = getDistanceBetween(currentPose, FieldPositions.tag8);
@@ -609,37 +605,29 @@ public class DriveSubsystem extends SubsystemBase {
       double distanceToTen = getDistanceBetween(currentPose, FieldPositions.tag10);
       double distanceToEleven = getDistanceBetween(currentPose, FieldPositions.tag11);
 
+      //sets desired position to closest side of reef
       distanceToTarget = distanceToSix;
-      if(left){
-        desiredPosition = FieldPositions.leftTag6;
-      } else {
-        desiredPosition = FieldPositions.rightTag6;
-      }
+      desiredPosition = FieldPositions.algaeTag6;
 
       if(distanceToSix > distanceToSeven){
-        distanceToTarget = distanceToSeven;
-        //TODO find desired positions
-        desiredPosition =   
+        distanceToTarget = distanceToSeven; 
+        desiredPosition = FieldPositions.algaeTag7;
       }
       if(distanceToTarget > distanceToEight){
         distanceToTarget = distanceToEight;
-        //TODO find desired positions
-        desiredPosition = 
+        desiredPosition = FieldPositions.algaeTag8;
       }
       if(distanceToTarget > distanceToNine){
-        distanceToTarget = distanceToNine;
-        //TODO find desired positions
-        desiredPosition = 
+        distanceToTarget = distanceToNine;      
+        desiredPosition = FieldPositions.algaeTag9;
       }
       if(distanceToTarget > distanceToTen){
         distanceToTarget = distanceToTen;
-        //TODO find desired positions
-        desiredPosition = 
+        desiredPosition = FieldPositions.algaeTag10;
       }
       if(distanceToTarget > distanceToEleven){
         distanceToTarget = distanceToEleven;
-        //TODO find desired positions
-        desiredPosition = 
+        desiredPosition = FieldPositions.algaeTag11;
 
       }
     }

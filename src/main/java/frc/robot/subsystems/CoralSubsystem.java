@@ -13,6 +13,8 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
@@ -22,26 +24,14 @@ public class CoralSubsystem extends SubsystemBase {
 
   private final SparkMax coralWheel;
   private final RelativeEncoder coralWheelEncoder;
+  private final DigitalInput beamBreak;
 
   private final double runSpeed = 0.8;
-
-  //double lowerLimit = 7;
-  double lowerLimit = 10;
-  //35
-  double upperLimit = 95;
-  //95
-  //19.5945
-
-  //TODO get these angles
-  double L4Angle = 90;
-  double L3Angle = 95;
-  double L2Angle = 95;
-  double L1Angle = 90;
-  double L0Angle = 5;
  
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
-    
+    beamBreak = new DigitalInput(5);
+        
     coralWheel = new SparkMax(CoralConstants.coralCANID, MotorType.kBrushless);
     coralWheelEncoder = coralWheel.getEncoder();
 
@@ -70,6 +60,26 @@ public class CoralSubsystem extends SubsystemBase {
 
   public void runCoral(double speed){
     coralWheel.set(speed);
+  }
+
+  public boolean getBeamBreak(){
+    return beamBreak.get();
+  }
+
+  public void runIn(){
+    if(getBeamBreak()){
+      coralWheel.set(runSpeed);
+    } else {
+      coralWheel.stopMotor();
+    }
+  }
+
+  public void runOut(){
+    if(!getBeamBreak()){
+      coralWheel.set(-runSpeed);
+    } else {
+      coralWheel.stopMotor();
+    }
   }
 
 
