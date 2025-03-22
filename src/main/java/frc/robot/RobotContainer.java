@@ -78,7 +78,7 @@ public class RobotContainer {
   private final TiltSubsystem tiltCoral = new TiltSubsystem();
   // TODO add feeder back in
   //private final FeederSubsystem feeder = new FeederSubsystem();
-  //private final Climber climber = new Climber();
+  private final Climber climber = new Climber();
 
 
   // The driver's controller
@@ -174,11 +174,11 @@ public class RobotContainer {
               true),
           m_robotDrive)); 
 
-  /*   // Configure default commands
+    // Configure default commands
     climber.setDefaultCommand(
         new RunCommand(
             () -> climber.stopClimber(),
-            climber)); */
+            climber));
 
     //TODO add back in for OYDS
     //Elevator
@@ -255,18 +255,18 @@ public class RobotContainer {
           -MathUtil.applyDeadband(flightJoystick.getX(), OIConstants.kDriveDeadband),
           Math.abs(-MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband)) > Math.abs(-MathUtil.applyDeadband(flightJoystick.getZ(), OIConstants.kDriveDeadband))?
           -MathUtil.applyDeadband(steeringWheel.getX(), OIConstants.kDriveDeadband) : -MathUtil.applyDeadband(flightJoystick.getZ(), OIConstants.kDriveDeadband), false))); 
-    /* //Robot down
+    //Robot down
     new JoystickButton(flightJoystick, 4)
       .whileTrue(new RunCommand(
-        () -> climber.climberOut(), climber)); */
+        () -> climber.climberIn(), climber));
     //Line up algae reef
     new JoystickButton(flightJoystick, 5)
       .whileTrue(new RunCommand(
         () -> m_robotDrive.driveToAlgaeReef(), m_robotDrive));
-/*     //Robot up
+    //Robot up
     new JoystickButton(flightJoystick, 6)
       .whileTrue(new RunCommand(
-        () -> climber.climberIn(), climber)); */
+        () -> climber.climberOut(), climber));
 
 
     //Processor

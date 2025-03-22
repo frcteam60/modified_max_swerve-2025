@@ -14,7 +14,7 @@ public final class Configs {
         static {
             elevatorConfig
                 .idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(50);
+                .smartCurrentLimit(45);
             /* elevatorConfig.encoder
                     .positionConversionFactor(drivingFactor) // meters
                     .velocityConversionFactor(drivingFactor / 60.0); // meters per second */
@@ -36,6 +36,17 @@ public final class Configs {
         
                 
     }
+    public static final class ClimberConfigure{
+        public static final SparkMaxConfig climberConfig = new SparkMaxConfig();
+
+        static {
+            climberConfig
+                .idleMode(IdleMode.kBrake)
+                .smartCurrentLimit(45);
+        }
+        
+                
+    }
     public static final class CoralConfig{
         public static final SparkMaxConfig coralWheelConfig = new SparkMaxConfig();
         public static final SparkMaxConfig coralTiltConfig = new SparkMaxConfig();
@@ -44,7 +55,7 @@ public final class Configs {
             coralWheelConfig
                     .idleMode(IdleMode.kBrake)
                     //TODO check smart current limit
-                    .smartCurrentLimit(50);
+                    .smartCurrentLimit(45);
 /*             coralWheelConfig.encoder
                     .positionConversionFactor(drivingFactor) // meters
                     .velocityConversionFactor(drivingFactor / 60.0); // meters per second */

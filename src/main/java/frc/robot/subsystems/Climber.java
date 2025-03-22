@@ -17,9 +17,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Optional;
 
@@ -27,9 +24,6 @@ import java.lang.invoke.VolatileCallSite;
 import java.security.PublicKey;
 import java.util.List;
 import java.util.function.Consumer;
-
-
-
 
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
@@ -42,6 +36,15 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkMax;
+
+
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -49,32 +52,20 @@ import java.util.function.Consumer;
 
 public class Climber extends SubsystemBase {
 
-  private final WPI_TalonSRX climberOne;
-  private final WPI_TalonSRX climberTwo;  
+  private final SparkMax climberMotor;
+  private final RelativeEncoder climberEncoder;
 
-  double runSpeed = 1;
-  
+  double runSpeed = 0.25;
+
+  double lowerLimit = 0;
+  double upperLimit = 0.5;
 
   /** Creates a new DriveSubsystem. */
   public Climber() {
+    climberMotor = new SparkMax(ClimberConstants.climberOneCANID, MotorType.kBrushless);
+    climberEncoder = climberMotor.getEncoder();
 
-    climberOne = new WPI_TalonSRX(ClimberConstants.climberOneCANID);
-    climberOne.setSafetyEnabled(true);
-    climberOne.setNeutralMode(NeutralMode.Brake);
-
-    climberTwo = new WPI_TalonSRX(ClimberConstants.climberTwoCANID);
-    climberTwo.setSafetyEnabled(false);
-    climberTwo.setNeutralMode(NeutralMode.Brake);
-    climberTwo.follow(climberOne);
-
-/*     //climberOne.configAllSettings(null);
-    climberOne.enableCurrentLimit(true);
-    climberOne.follow(climberOne);
-    climberOne.getStatorCurrent();
-    climberOne.setInverted(false);
-    climberOne.setSafetyEnabled(true);
-    climberOne.stopMotor();
-    climberOne.setNeutralMode(null); */
+    climberMotor.configure(Configs.ClimberConfigure.climberConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
   }
 
@@ -84,31 +75,25 @@ public class Climber extends SubsystemBase {
   }
 
   public void climberIn(){
-    runClimber(-1);
+    climberMotor.set(-runSpeed);
   }
   public void climberOut(){
-    runClimber(1);
+    climberMotor.set(runSpeed);
   }
 
   public void runClimber(double speed){
-/*     if(cli.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
-      elevatorOneMax.stopMotor();
-      elevatorTwoMax.stopMotor();
-    } else if (elevatorOneEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
-      elevatorOneMax.stopMotor();
-      elevatorTwoMax.stopMotor();
+ /*    if(climberEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
+      climberMotor.stopMotor();
+    } else if (climberEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
+      climberMotor.stopMotor();
     } else{
-      elevatorOneMax.set(0.5*speed);
-      elevatorTwoMax.set(0.5*speed);
-    } */
-
-    climberOne.set(runSpeed*speed);
+      climberMotor.set(runSpeed*speed);
+    }  */
+    climberMotor.set(runSpeed*speed);
   }
 
   public void stopClimber(){
-    climberOne.stopMotor();
-    // climberTwo.stopMotor();
-
+    climberMotor.stopMotor();
   }
 
 
