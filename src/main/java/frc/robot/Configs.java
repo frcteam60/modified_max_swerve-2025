@@ -25,7 +25,8 @@ public final class Configs {
                     //.pidf(drivingVelocityFeedForward, steeringFactor, drivingFactor, drivingVelocityFeedForward)
                     .pid(0.2, 0, 0)
                     //import edu.wpi.first.wpilibj.Preferences;
-                    .outputRange(-0.09, 0.60, ClosedLoopSlot.kSlot0);
+                    .outputRange(-0.07, 0.60, ClosedLoopSlot.kSlot0);
+                    //.outputRange(-0.09, 0.60, ClosedLoopSlot.kSlot0);
                     //.pid(0, 0, 0, ClosedLoopSlot.kSlot0);
                     //.pid(0, 0, 0, ClosedLoopSlot.kSlot1);
                     //.pid(1, 0, 0)

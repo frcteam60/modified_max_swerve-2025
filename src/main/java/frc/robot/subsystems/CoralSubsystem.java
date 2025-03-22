@@ -51,7 +51,7 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public void coralExpel() {
-    coralWheel.set(-1*runSpeed);
+    coralWheel.set(-runSpeed);
   }
 
   public void coralStop() {

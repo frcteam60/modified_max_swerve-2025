@@ -5,13 +5,7 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 5.0
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -36,13 +30,19 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "NewCenterReef"
+                  "pathName": "RightReef"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "Elevator at L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Coral tilt to L4"
                 }
               }
             ]
@@ -55,7 +55,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "release coral"
+                  "name": "drop coral"
                 }
               },
               {
@@ -74,7 +74,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "backUp"
+                  "pathName": "rightBackUp"
                 }
               },
               {
@@ -87,19 +87,69 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "RightToCoralStation"
+                }
+              },
+              {
                 "type": "named",
                 "data": {
-                  "name": "Elevator to home"
+                  "name": "Elevator at home"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "Coral tilt to L0"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake coral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "feed coral"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "stationToRightReef"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator to L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Coral tilt to L4"
                 }
               }
             ]

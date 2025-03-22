@@ -91,16 +91,17 @@ public class TiltSubsystem extends SubsystemBase {
 
   public void tiltTo(double desiredPosition){
     SmartDashboard.putNumber("desiredtilt", desiredPosition);
+    double position = tiltEncoder.getPosition();
     //System.out.println("desired position" + desiredPosition);
-    if(tiltEncoder.getPosition() <= (lowerLimit) && (desiredPosition <=(lowerLimit))){ 
+    if(position <= (lowerLimit) && (desiredPosition <=(lowerLimit))){ 
      //System.out.println("A");
        tiltMax.stopMotor();
-     } else if (tiltEncoder.getPosition() >= (upperLimit) && (desiredPosition >= (upperLimit))){
+     } else if (position >= (upperLimit) && (desiredPosition >= (upperLimit))){
        //System.out.println("B");
        tiltMax.stopMotor();
      } else{
        //System.out.println("C");
-       if (desiredPosition > tiltEncoder.getPosition()){
+       if (desiredPosition > position){
         //Up 
         tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot1);
        }else{
@@ -109,6 +110,11 @@ public class TiltSubsystem extends SubsystemBase {
        }
      }
 
+    if(Math.abs(desiredPosition-position) > 1){
+      atDesiredTilt = false;
+    } else {
+      atDesiredTilt = true;
+    }
      
 
      /* if(tiltEncoder.getPosition()>desiredPosition){
@@ -155,5 +161,9 @@ public class TiltSubsystem extends SubsystemBase {
   }
   public void lineUpUpperAlgae(){
     tiltTo(upperAlgae);
+  }
+
+  public boolean atDesiredTilt(){
+    return atDesiredTilt;
   }
 }

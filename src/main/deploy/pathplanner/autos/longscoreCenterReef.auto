@@ -11,7 +11,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Coral tilt to L4"
+                  "name": "Coral angle L4"
                 }
               }
             ]
@@ -42,45 +42,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator at L4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "release coral"
+                  "name": "Elevator to L4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator at L4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "backUp"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator at L4"
+                  "name": "Coral angle L4"
                 }
               }
             ]
@@ -93,16 +61,47 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator to home"
+                  "name": "Elevator to L4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Coral tilt to L0"
+                  "name": "release coral"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "joinBackUp"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator to L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator to home"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "centerToCoralStation"
           }
         }
       ]

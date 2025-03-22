@@ -76,6 +76,7 @@ public class RobotContainer {
   private final AlgaeSubsystem algae = new AlgaeSubsystem();
   private final CoralSubsystem coral = new CoralSubsystem();
   private final TiltSubsystem tiltCoral = new TiltSubsystem();
+  // TODO add feeder back in
   //private final FeederSubsystem feeder = new FeederSubsystem();
   //private final Climber climber = new Climber();
 
@@ -99,21 +100,51 @@ public class RobotContainer {
    */
   public RobotContainer() {
     //Auto Commands
+    // To means stop when reached
+    // At means runs forever keeping it there
+
+    //runs until within 1 from height
     NamedCommands.registerCommand("Elevator to L4", 
       Commands.run(() -> lift.lineUpL4(), lift)
         .until(() -> lift.checkCorrectHeight()));
-
-    NamedCommands.registerCommand("Coral angle L4", 
+    // goes to L4 height and stays there
+    NamedCommands.registerCommand("Elevator at L4", 
+      Commands.run(() -> lift.lineUpL4(), lift));
+    //runs until within 1 from angle
+    NamedCommands.registerCommand("Coral tilt to L4", 
     Commands.run(() -> tiltCoral.lineUpL4(), tiltCoral)
-     .withTimeout(2));
+    .until(() -> tiltCoral.atDesiredTilt()));
 
+    NamedCommands.registerCommand("Coral tilt to L0", 
+    Commands.run(() -> tiltCoral.lineUpL0(), tiltCoral)
+      .until(() -> tiltCoral.atDesiredTilt()));
+
+    //expels coral for 2 seconds
     NamedCommands.registerCommand("release coral", 
     Commands.run(() -> coral.coralExpel(), coral)
       .withTimeout(2));
 
+    // expels coral until out of robot
+    NamedCommands.registerCommand("drop coral", 
+      Commands.run(() -> coral.runOut(), coral)
+      .until(() -> coral.getBeamBreak()));
+    // intakes coral until sensor triggered
+    NamedCommands.registerCommand("intake coral", 
+      Commands.run(() -> coral.runIn(), coral)
+      .until(() -> coral.getBeamBreak()));
+
+    // TODO add feeder back in
+/*     // runs feeder until sensor triggered
+    NamedCommands.registerCommand("feed coral", 
+      Commands.run(() -> feeder.runFeeder(), feeder)
+      .until(() -> coral.getBeamBreak())); */
+    //
     NamedCommands.registerCommand("Elevator to home", 
       Commands.run(() -> lift.setAtHeight(3), lift)
         .until(() -> lift.checkCorrectHeight()));
+
+    NamedCommands.registerCommand("Elevator at home", 
+      Commands.run(() -> lift.setAtHeight(3), lift));
 
 
     // Configure the button bindings
