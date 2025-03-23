@@ -34,8 +34,8 @@ public class CoralSubsystem extends SubsystemBase {
   boolean lastBeamBreak = false;
 
 
-  //79.6 revolutions after see it to all in
-  //to run it flush front instead do half
+  //79.6 revolutions after see it to all in //39.8
+  //to run it flush front, instead do half
 
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
