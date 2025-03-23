@@ -27,7 +27,16 @@ public class CoralSubsystem extends SubsystemBase {
   private final DigitalInput beamBreak;
 
   private final double runSpeed = 0.8;
- 
+  double beginningPosition = 0;
+  boolean coralAllIn = false;
+  boolean coralAllOut = false;
+  //TODO what way does this default
+  boolean lastBeamBreak = false;
+
+
+  //79.6 revolutions after see it to all in
+  //to run it flush front instead do half
+
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
     beamBreak = new DigitalInput(5);
@@ -44,6 +53,7 @@ public class CoralSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     showEncoders();
+    SmartDashboard.putBoolean("beam break", getBeamBreak());
   }
 
   public void coralIntake() {
@@ -66,20 +76,56 @@ public class CoralSubsystem extends SubsystemBase {
     return beamBreak.get();
   }
 
-  public void runIn(){
-    if(getBeamBreak()){
-      coralWheel.set(runSpeed);
-    } else {
-      coralWheel.stopMotor();
+  public boolean runIn(){
+    boolean currentBeamBreak = getBeamBreak();
+    //beam break true assumed beam broken
+
+    if(currentBeamBreak && !lastBeamBreak){// if beamBreak true and last beam break false i.e. beam break changed to true
+      beginningPosition = coralWheelEncoder.getPosition();//sets this position as reference positions
+    } 
+
+    if((beginningPosition - coralWheelEncoder.getPosition()) >= 79.6 && currentBeamBreak){//if coral has traveled 79.6 rotations since breaking beam
+      coralAllIn = true;//then coral is all in
+    } else{
+      coralAllIn = false;//else coral is not all in
     }
+
+    if(coralAllIn){//stops wheel if coral all in 
+      coralWheel.stopMotor();
+    } else {//runs wheel if coral not all in
+      coralWheel.set(runSpeed);
+    }
+
+    boolean lastBeamBreak = currentBeamBreak;//current beam break = last beam break
+
+    //return 
+    return coralAllIn;
   }
 
-  public void runOut(){
-    if(!getBeamBreak()){
-      coralWheel.set(-runSpeed);
-    } else {
-      coralWheel.stopMotor();
+  public boolean runOut(){
+    boolean currentBeamBreak = getBeamBreak();
+    //beam break true assumed beam broken
+
+    if(!currentBeamBreak && lastBeamBreak){// if beamBreak false and last beam break true i.e. beam break changed to false
+      beginningPosition = coralWheelEncoder.getPosition();//sets this position as reference positions
+    } 
+    //TODO need different #
+    if((coralWheelEncoder.getPosition() - beginningPosition) >= 79.6 && !currentBeamBreak){//if coral has traveled -79.6 rotations since leaving beam break
+      coralAllOut = true;//then coral is all out
+    } else{
+      coralAllIn = false;//else coral is not all out
     }
+
+    if(coralAllOut){//stops wheel if coral all out 
+      coralWheel.stopMotor();
+    } else {//runs wheel if coral not all out
+      coralWheel.set(-runSpeed);
+    }
+
+    boolean lastBeamBreak = currentBeamBreak;//current beam break = last beam break
+
+    //return 
+    return coralAllOut;
   }
 
 

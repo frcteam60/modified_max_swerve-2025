@@ -28,7 +28,7 @@ public class TiltSubsystem extends SubsystemBase {
   private final double runSpeed = 0.8;
 
   //double lowerLimit = 7;
-  double lowerLimit = 3;
+  double lowerLimit = -5;
   //35
   double upperLimit = 95;
   //95
@@ -42,7 +42,8 @@ public class TiltSubsystem extends SubsystemBase {
   double L3Angle = 95;
   double L2Angle = 95;
   double L1Angle = 90;
-  double L0Angle = 5;
+  double L0Angle = -4.33;
+  //double L0Angle = 5;
 
 
   //TODO fix these angles

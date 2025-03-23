@@ -127,7 +127,7 @@ public class RobotContainer {
     // expels coral until out of robot
     NamedCommands.registerCommand("drop coral", 
       Commands.run(() -> coral.runOut(), coral)
-      .until(() -> coral.getBeamBreak()));
+      .until(() -> !coral.getBeamBreak()));
     // intakes coral until sensor triggered
     NamedCommands.registerCommand("intake coral", 
       Commands.run(() -> coral.runIn(), coral)

@@ -66,9 +66,7 @@ public final class Constants {
   }
 
   public static final class  ClimberConstants {
-    public static final int climberOneCANID = 10;
-    public static final int climberTwoCANID = 11;
-    
+    public static final int climberCANID = 10;   
   }
 
   public static final class DriveConstants {

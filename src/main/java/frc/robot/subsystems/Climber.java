@@ -62,7 +62,7 @@ public class Climber extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public Climber() {
-    climberMotor = new SparkMax(ClimberConstants.climberOneCANID, MotorType.kBrushless);
+    climberMotor = new SparkMax(ClimberConstants.climberCANID, MotorType.kBrushless);
     climberEncoder = climberMotor.getEncoder();
 
     climberMotor.configure(Configs.ClimberConfigure.climberConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

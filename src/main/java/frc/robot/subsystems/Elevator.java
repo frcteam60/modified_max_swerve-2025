@@ -90,7 +90,8 @@ public class Elevator extends SubsystemBase {
   double L3Height = 17.50;
   double L2Height = 10.47;
   double L1Height = 6.08;
-  double L0Height = 0;
+  //double L0Height = 0;
+  double L0Height = 0.788;
 
 
   //TODO need new limits
