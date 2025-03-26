@@ -15,6 +15,12 @@
           "data": {
             "pathName": "ShortRightEdge"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Climber at Out"
+          }
         }
       ]
     }

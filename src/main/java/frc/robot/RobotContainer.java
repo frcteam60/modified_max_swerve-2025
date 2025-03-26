@@ -104,6 +104,10 @@ public class RobotContainer {
     // At means runs forever keeping it there
 
     //runs until within 1 from height
+    NamedCommands.registerCommand("Climber at Out", 
+      Commands.run(() -> climber.setClimberPosition(-146), climber));
+
+    //runs until within 1 from height
     NamedCommands.registerCommand("Elevator to L4", 
       Commands.run(() -> lift.lineUpL4(), lift)
         .until(() -> lift.checkCorrectHeight()));
@@ -491,6 +495,14 @@ public class RobotContainer {
   public void setUp(){
     m_robotDrive.checkAllianceColor();
     m_robotDrive.setEncoder();
+  }
+  //DONT USE without double checking, this has a loop!
+  public void moveClimberOutOfTheWay(){
+    boolean atPos = false;
+    while(!atPos){
+      atPos =  2 > climber.setClimberPosition(-146);
+    }
+    climber.stopClimber();
   }
 
 }

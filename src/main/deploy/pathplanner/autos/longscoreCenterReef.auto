@@ -25,6 +25,12 @@
                 "data": {
                   "name": "Coral angle L4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Climber at Out"
+                }
               }
             ]
           }
@@ -49,6 +55,12 @@
                 "type": "named",
                 "data": {
                   "name": "Coral angle L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Climber at Out"
                 }
               }
             ]

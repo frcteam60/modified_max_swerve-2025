@@ -44,6 +44,12 @@
                 "data": {
                   "name": "Elevator at L4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Climber at Out"
+                }
               }
             ]
           }
@@ -63,6 +69,12 @@
                 "data": {
                   "name": "Elevator at L4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Climber at Out"
+                }
               }
             ]
           }
@@ -81,6 +93,12 @@
                 "type": "named",
                 "data": {
                   "name": "Elevator at L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Climber at Out"
                 }
               }
             ]

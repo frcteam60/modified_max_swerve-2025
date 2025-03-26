@@ -62,11 +62,11 @@ public final class Constants {
   }
 
   public static final class FeederConstants {
-    public static final int feederCANID = 9;
+    public static final int feederCANID = 10;
   }
 
   public static final class  ClimberConstants {
-    public static final int climberCANID = 10;   
+    public static final int climberCANID = 9;   
   }
 
   public static final class DriveConstants {
@@ -128,9 +128,9 @@ public final class Constants {
     public static final double kFrontRightAbsOffset = Math.toRadians(0.110444 * 360);
     public static final double kRearRightAbsOffset = Math.toRadians(0.238739 * 360); */
     //Water Tight TODO
-    public static final double kFrontLeftAbsOffset = Math.toRadians(0.473 * 360);
+    public static final double kFrontLeftAbsOffset = Math.toRadians(0.470 * 360);
     public static final double kRearLeftAbsOffset = Math.toRadians(0.67 * 360);
-    public static final double kFrontRightAbsOffset = Math.toRadians(0.901 * 360);
+    public static final double kFrontRightAbsOffset = Math.toRadians(0.097 * 360);
     public static final double kRearRightAbsOffset = Math.toRadians(0.34 * 360);
   }
 

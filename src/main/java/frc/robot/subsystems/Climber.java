@@ -18,6 +18,8 @@ import frc.robot.Constants.ClimberConstants;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.Optional;
 
 import java.lang.invoke.VolatileCallSite;
@@ -55,10 +57,12 @@ public class Climber extends SubsystemBase {
   private final SparkMax climberMotor;
   private final RelativeEncoder climberEncoder;
 
-  double runSpeed = 0.25;
-
-  double lowerLimit = 0;
-  double upperLimit = 0.5;
+  double runSpeed = 1;
+  //166 range
+  //higher positive
+  //lower negative
+  double lowerLimit = -146;
+  double upperLimit = 20;
 
   /** Creates a new DriveSubsystem. */
   public Climber() {
@@ -71,29 +75,36 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("ClimberPosition", climberEncoder.getPosition());
 
   }
 
   public void climberIn(){
-    climberMotor.set(-runSpeed);
+    runClimber(-runSpeed);
   }
   public void climberOut(){
-    climberMotor.set(runSpeed);
+    runClimber(runSpeed);
   }
 
   public void runClimber(double speed){
- /*    if(climberEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
+    if(climberEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
       climberMotor.stopMotor();
     } else if (climberEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
       climberMotor.stopMotor();
     } else{
-      climberMotor.set(runSpeed*speed);
-    }  */
-    climberMotor.set(runSpeed*speed);
+      climberMotor.set(speed);
+    } 
+    //climberMotor.set(speed);
   }
 
   public void stopClimber(){
     climberMotor.stopMotor();
+  }
+
+  public double setClimberPosition(double desiredPosition){
+    double error = (desiredPosition-climberEncoder.getPosition());
+    climberMotor.set(error*0.05);
+    return error;
   }
 
 

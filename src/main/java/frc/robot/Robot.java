@@ -100,6 +100,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     m_robotContainer.setUp();
+
   }
 
   /** This function is called periodically during operator control. */

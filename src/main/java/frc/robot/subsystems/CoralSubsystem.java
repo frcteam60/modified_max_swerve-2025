@@ -52,7 +52,7 @@ public class CoralSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    showEncoders();
+    //showEncoders();
     SmartDashboard.putBoolean("beam break", getBeamBreak());
   }
 

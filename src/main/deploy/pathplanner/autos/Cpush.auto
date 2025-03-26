@@ -21,6 +21,12 @@
           "data": {
             "pathName": "goToReef"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Climber at Out"
+          }
         }
       ]
     }

@@ -9,6 +9,12 @@
           "data": {
             "pathName": "CenterReef"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Climber at Out"
+          }
         }
       ]
     }
