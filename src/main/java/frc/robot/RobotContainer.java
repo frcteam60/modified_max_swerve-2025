@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Joystick.ButtonType;
 import edu.wpi.first.wpilibj.Joystick.*;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.PS4Controller.Button;
@@ -79,7 +80,6 @@ public class RobotContainer {
 
   private final FeederSubsystem feeder = new FeederSubsystem();
   private final Climber climber = new Climber();
-
 
   // The driver's controller
   //port zero
@@ -183,11 +183,19 @@ public class RobotContainer {
             () -> climber.stopClimber(),
             climber));
 
-    //TODO add back in for OYDS
+/*     //TODO add back in for OYDS
     //Elevator
     lift.setDefaultCommand(
       new RunCommand(
         () -> lift.runElevator(MathUtil.applyDeadband(-secondXboxController.getLeftY(), 0.05)), 
+        lift)
+    ); */
+
+        //TODO add back in for OYDS
+    //Elevator
+    lift.setDefaultCommand(
+      new RunCommand(
+        () -> lift.setAtHeight(0.7888), 
         lift)
     );
 
@@ -195,9 +203,12 @@ public class RobotContainer {
     // tilt coral
     tiltCoral.setDefaultCommand(
       new RunCommand(
-        () -> tiltCoral.tiltEndEffector(MathUtil.applyDeadband(-secondXboxController.getRightY(), 0.05)), 
+        () -> tiltCoral.tiltTo(
+          lift.returnHeight() <= 12?
+          -4.33 :  90), 
         tiltCoral)
     );
+
 
     //TODO add back in for OYDS
     // coral wheel
@@ -300,6 +311,17 @@ public class RobotContainer {
 
   //TODO add back in for OYDS
   private void configureSecondaryButtonBindings() {
+    // Lift Controlled by joystick
+    new Trigger(() -> Math.abs(MathUtil.applyDeadband(-secondXboxController.getLeftY(), 0.05)) > 0.05)
+      .whileTrue(new RunCommand( () -> lift.runElevator(MathUtil.applyDeadband(-secondXboxController.getLeftY(), 0.05)), lift));
+
+    //TODO add back in for OYDS
+    // tilt coral joystick
+    new Trigger(() -> Math.abs(secondXboxController.getRightY()) > 0.05)
+      .whileTrue(new RunCommand(
+        () -> tiltCoral.tiltEndEffector(MathUtil.applyDeadband(-secondXboxController.getRightY(), 0.05)), 
+        tiltCoral));
+ 
     // algae in
     new JoystickButton(secondXboxController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(() -> algae.algaeIntake(), algae))

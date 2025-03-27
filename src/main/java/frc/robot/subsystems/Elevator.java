@@ -97,6 +97,7 @@ public class Elevator extends SubsystemBase {
   //TODO need new limits
   double lowerLimit = 1;
   double upperLimit = 28.5;
+  double currentHeight;
   // 28.886920
   //double upperLimit = 19.90485;
 
@@ -152,8 +153,8 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    currentHeight = elevatorOneEncoder.getPosition();
     showEncoders();
-    
     
   }
 
@@ -163,7 +164,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void showEncoders(){
-    SmartDashboard.putNumber("elevatorOne", elevatorOneEncoder.getPosition());
+    SmartDashboard.putNumber("elevatorOne", currentHeight);
     SmartDashboard.putNumber("elevatorTwo", elevatorTwoEncoder.getPosition());
   }
 
@@ -174,10 +175,10 @@ public class Elevator extends SubsystemBase {
 
   public void runElevator(double speed){
     setAlgaeMode(false);
-    if(elevatorOneEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
+    if(currentHeight <= lowerLimit && (Math.signum(speed) == -1)){ 
       elevatorOneMax.stopMotor();
       elevatorTwoMax.stopMotor();
-    } else if (elevatorOneEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
+    } else if (currentHeight >= upperLimit && (Math.signum(speed) == 1)){
       elevatorOneMax.stopMotor();
       elevatorTwoMax.stopMotor();
     } else if(speed < 0){
@@ -197,7 +198,7 @@ public class Elevator extends SubsystemBase {
     elevatorOneClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
     elevatorTwoClosedLoopController.setReference(desiredHeight, ControlType.kPosition);
 
-    if (Math.abs(desiredHeight - elevatorOneEncoder.getPosition()) <= 1){
+    if (Math.abs(desiredHeight - currentHeight) <= 1){
       isAtHeight = true;
     } else {
       isAtHeight = false;
@@ -254,6 +255,10 @@ public class Elevator extends SubsystemBase {
   
   public boolean checkCorrectHeight(){
     return isAtHeight;
+  }
+
+  public double returnHeight(){
+    return currentHeight;
   }
 
 }

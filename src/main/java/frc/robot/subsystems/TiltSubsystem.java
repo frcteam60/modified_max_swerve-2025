@@ -36,8 +36,7 @@ public class TiltSubsystem extends SubsystemBase {
 
   boolean atDesiredTilt = false;
 
-  //TODO get these angles
-  //at field make higher?
+  //TODO test 1-3
   double L4Angle = 90;
   double L3Angle = 95;
   double L2Angle = 95;
@@ -47,17 +46,18 @@ public class TiltSubsystem extends SubsystemBase {
 
 
   //TODO fix these angles
-  double upperAlgae = 36;
-  double lowerAlgae = 36;
+  double upperAlgae = 22;//36
+  double lowerAlgae = 22;//36
   double barge = 95;
-  double processor = 36;
+  double processor = 22;//8.30954?
+
+  double currentTilt;
  
   /** Creates a new CoralSubsystem. */
   public TiltSubsystem() {
 
     tiltMax = new SparkMax(CoralConstants.tiltCANID, MotorType.kBrushless);
     tiltEncoder = tiltMax.getEncoder();
-
     tiltClosedLoopController = tiltMax.getClosedLoopController();
     tiltMax.configure(Configs.CoralConfig.coralTiltConfig, ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
@@ -68,15 +68,16 @@ public class TiltSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     showEncoders();
+    currentTilt = tiltEncoder.getPosition();
   }
 
 
   public void tiltEndEffector(double speed){
    //System.out.println(speed);
-   if(tiltEncoder.getPosition() <= lowerLimit && (Math.signum(speed) == -1)){ 
+   if(currentTilt <= lowerLimit && (Math.signum(speed) == -1)){ 
     //System.out.println("A");
       tiltMax.stopMotor();
-    } else if (tiltEncoder.getPosition() >= upperLimit && (Math.signum(speed) == 1)){
+    } else if (currentTilt >= upperLimit && (Math.signum(speed) == 1)){
       //System.out.println("B");
       tiltMax.stopMotor();
     } else{
@@ -92,7 +93,7 @@ public class TiltSubsystem extends SubsystemBase {
 
   public void tiltTo(double desiredPosition){
     SmartDashboard.putNumber("desiredtilt", desiredPosition);
-    double position = tiltEncoder.getPosition();
+    double position = currentTilt;
     //System.out.println("desired position" + desiredPosition);
     if(position <= (lowerLimit) && (desiredPosition <=(lowerLimit))){ 
      //System.out.println("A");
@@ -127,7 +128,7 @@ public class TiltSubsystem extends SubsystemBase {
   }
 
   public void showEncoders(){
-    SmartDashboard.putNumber("End Effector angle", tiltEncoder.getPosition());
+    SmartDashboard.putNumber("End Effector angle", currentTilt);
     SmartDashboard.putNumber("EndEffectorSpeed", tiltEncoder.getVelocity());
   }
 
@@ -166,5 +167,9 @@ public class TiltSubsystem extends SubsystemBase {
 
   public boolean atDesiredTilt(){
     return atDesiredTilt;
+  }
+
+  public double returnTilt(){
+    return currentTilt;
   }
 }
