@@ -166,6 +166,12 @@
               }
             ]
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator at L4"
+          }
         }
       ]
     }

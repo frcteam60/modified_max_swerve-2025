@@ -107,6 +107,10 @@ public class Climber extends SubsystemBase {
     return error;
   }
 
+  public void noLimitClimber(double speed){
+    climberMotor.set(speed);
+  }
+
 
 
 }

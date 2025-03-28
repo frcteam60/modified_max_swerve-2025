@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.CoralConstants;
@@ -28,27 +29,28 @@ public class TiltSubsystem extends SubsystemBase {
   private final double runSpeed = 0.8;
 
   //double lowerLimit = 7;
-  double lowerLimit = -5;
+  double lowerLimit = 0;
   //35
-  double upperLimit = 95;
+  double upperLimit = 70;//95
   //95
   //19.5945
 
   boolean atDesiredTilt = false;
 
   //TODO test 1-3
-  double L4Angle = 90;
-  double L3Angle = 95;
-  double L2Angle = 95;
-  double L1Angle = 90;
-  double L0Angle = -4.33;
+  double L4Angle = 70;//90
+  double L3Angle = 70;//95
+  double L2Angle = 70;//95
+  double L1Angle = 70;
+  double L0Angle = 0;
+  //double L0Angle = -4.33;
   //double L0Angle = 5;
 
 
   //TODO fix these angles
   double upperAlgae = 22;//36
   double lowerAlgae = 22;//36
-  double barge = 95;
+  double barge = 70;//95
   double processor = 22;//8.30954?
 
   double currentTilt;
@@ -103,6 +105,7 @@ public class TiltSubsystem extends SubsystemBase {
        tiltMax.stopMotor();
      } else{
        //System.out.println("C");
+       
        if (desiredPosition > position){
         //Up 
         tiltClosedLoopController.setReference(desiredPosition, ControlType.kPosition, ClosedLoopSlot.kSlot1);

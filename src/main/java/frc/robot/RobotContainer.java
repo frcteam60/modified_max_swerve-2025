@@ -45,7 +45,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -94,6 +93,7 @@ public class RobotContainer {
   Joystick steeringWheel = new Joystick(3);
 
   private final SendableChooser<Command> autoChooser;
+
     
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -111,13 +111,17 @@ public class RobotContainer {
     NamedCommands.registerCommand("Elevator to L4", 
       Commands.run(() -> lift.lineUpL4(), lift)
         .until(() -> lift.checkCorrectHeight()));
+        //TODO or add timeout
     // goes to L4 height and stays there
     NamedCommands.registerCommand("Elevator at L4", 
       Commands.run(() -> lift.lineUpL4(), lift));
+
     //runs until within 1 from angle
     NamedCommands.registerCommand("Coral tilt to L4", 
     Commands.run(() -> tiltCoral.lineUpL4(), tiltCoral)
-    .until(() -> tiltCoral.atDesiredTilt()));
+    .until(() -> tiltCoral.atDesiredTilt())
+    .andThen(new InstantCommand(
+      () -> tiltCoral.stopTilt())));
 
     NamedCommands.registerCommand("Coral tilt to L0", 
     Commands.run(() -> tiltCoral.lineUpL0(), tiltCoral)
@@ -195,7 +199,7 @@ public class RobotContainer {
     //Elevator
     lift.setDefaultCommand(
       new RunCommand(
-        () -> lift.setAtHeight(0.7888), 
+        () -> lift.setAtHeight(1), 
         lift)
     );
 
@@ -204,8 +208,8 @@ public class RobotContainer {
     tiltCoral.setDefaultCommand(
       new RunCommand(
         () -> tiltCoral.tiltTo(
-          lift.returnHeight() <= 12?
-          -4.33 :  90), 
+          lift.returnHeight() <= 3?
+          0 :  50), 
         tiltCoral)
     );
 
@@ -222,6 +226,7 @@ public class RobotContainer {
     //TODO register commands also I think ? only if I use other commands?
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
+
 
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
@@ -281,6 +286,16 @@ public class RobotContainer {
     new JoystickButton(flightJoystick, 6)
       .whileTrue(new RunCommand(
         () -> climber.climberOut(), climber));
+
+    //No soft limit
+        //Robot down
+        new JoystickButton(flightJoystick, 4)
+        .whileTrue(new RunCommand(
+          () -> climber.noLimitClimber(-1), climber));
+      //Robot up
+      new JoystickButton(flightJoystick, 6)
+        .whileTrue(new RunCommand(
+          () -> climber.noLimitClimber(1), climber));
 
 
     //Processor

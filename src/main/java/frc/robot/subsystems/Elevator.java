@@ -91,7 +91,7 @@ public class Elevator extends SubsystemBase {
   double L2Height = 10.47;
   double L1Height = 6.08;
   //double L0Height = 0;
-  double L0Height = 0.788;
+  double L0Height = 1;
 
 
   //TODO need new limits
@@ -179,12 +179,15 @@ public class Elevator extends SubsystemBase {
       elevatorOneMax.stopMotor();
       elevatorTwoMax.stopMotor();
     } else if (currentHeight >= upperLimit && (Math.signum(speed) == 1)){
+      System.out.println("stopmotor");
       elevatorOneMax.stopMotor();
       elevatorTwoMax.stopMotor();
     } else if(speed < 0){
+      System.out.println("neg elvator speed" + runSpeed*speed*downMultiplier);
       elevatorOneMax.set(runSpeed*speed*downMultiplier);
       elevatorTwoMax.set(runSpeed*speed*downMultiplier);
     }else{
+      System.out.println("elevater speed" + runSpeed*speed);
       elevatorOneMax.set(runSpeed*speed);
       elevatorTwoMax.set(runSpeed*speed);
     }
