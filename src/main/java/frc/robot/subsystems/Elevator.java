@@ -87,8 +87,10 @@ public class Elevator extends SubsystemBase {
 
   
   double L4Height = 27.36;
-  double L3Height = 17.50;
-  double L2Height = 10.47;
+  double L3Height = 14;
+  double L2Height = 9;
+  //double L3Height = 17.50;
+  //double L2Height = 10.47;
   double L1Height = 6.08;
   //double L0Height = 0;
   double L0Height = 1;
@@ -96,7 +98,7 @@ public class Elevator extends SubsystemBase {
 
   //TODO need new limits
   double lowerLimit = 1;
-  double upperLimit = 28.5;
+  double upperLimit = 29;
   double currentHeight;
   // 28.886920
   //double upperLimit = 19.90485;
@@ -250,7 +252,7 @@ public class Elevator extends SubsystemBase {
   //divide by 2.22
   public void lowerAlgae(){
     //12.6
-    setAtHeight(12.6);//39.8 in /36 in/16.2
+    setAtHeight(10.5);//39.8 in /36 in/16.2     //12.6
   }
   public boolean getAlgaeMode(){
     return algaeMode;

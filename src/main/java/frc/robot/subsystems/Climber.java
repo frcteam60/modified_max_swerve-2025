@@ -61,8 +61,8 @@ public class Climber extends SubsystemBase {
   //166 range
   //higher positive
   //lower negative
-  double lowerLimit = -146;
-  double upperLimit = 20;
+  double lowerLimit = -671;
+  double upperLimit = 0;
 
   /** Creates a new DriveSubsystem. */
   public Climber() {

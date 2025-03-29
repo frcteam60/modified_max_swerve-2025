@@ -105,7 +105,7 @@ public class RobotContainer {
 
     //runs until within 1 from height
     NamedCommands.registerCommand("Climber at Out", 
-      Commands.run(() -> climber.setClimberPosition(-146), climber));
+      Commands.run(() -> climber.setClimberPosition(-671), climber));
 
     //runs until within 1 from height
     NamedCommands.registerCommand("Elevator to L4", 
@@ -187,31 +187,48 @@ public class RobotContainer {
             () -> climber.stopClimber(),
             climber));
 
-/*     //TODO add back in for OYDS
+     //TODO add back in for OYDS
     //Elevator
     lift.setDefaultCommand(
       new RunCommand(
         () -> lift.runElevator(MathUtil.applyDeadband(-secondXboxController.getLeftY(), 0.05)), 
         lift)
-    ); */
+    ); 
 
         //TODO add back in for OYDS
-    //Elevator
+/*     //Elevator
     lift.setDefaultCommand(
       new RunCommand(
         () -> lift.setAtHeight(1), 
         lift)
-    );
-
+    ); */
+ 
     //TODO add back in for OYDS
     // tilt coral
     tiltCoral.setDefaultCommand(
       new RunCommand(
         () -> tiltCoral.tiltTo(
           lift.returnHeight() <= 3?
-          0 :  50), 
+          0 :  100), 
         tiltCoral)
-    );
+    ); 
+/* 
+        //TODO add back in for OYDS
+    // tilt coral
+    tiltCoral.setDefaultCommand(
+      new RunCommand(
+        () -> tiltCoral., 
+        tiltCoral)
+    ); */
+
+    //TODO add back in for OYDS
+    // tilt coral joystick
+    tiltCoral.setDefaultCommand(
+      new RunCommand(
+        () -> tiltCoral.tiltEndEffector(MathUtil.applyDeadband(-secondXboxController.getRightY(), 0.05)), 
+      tiltCoral));
+    
+
 
 
     //TODO add back in for OYDS
@@ -289,11 +306,11 @@ public class RobotContainer {
 
     //No soft limit
         //Robot down
-        new JoystickButton(flightJoystick, 4)
+        new JoystickButton(flightJoystick, 9)
         .whileTrue(new RunCommand(
           () -> climber.noLimitClimber(-1), climber));
       //Robot up
-      new JoystickButton(flightJoystick, 6)
+      new JoystickButton(flightJoystick, 7)
         .whileTrue(new RunCommand(
           () -> climber.noLimitClimber(1), climber));
 
@@ -330,12 +347,12 @@ public class RobotContainer {
     new Trigger(() -> Math.abs(MathUtil.applyDeadband(-secondXboxController.getLeftY(), 0.05)) > 0.05)
       .whileTrue(new RunCommand( () -> lift.runElevator(MathUtil.applyDeadband(-secondXboxController.getLeftY(), 0.05)), lift));
 
-    //TODO add back in for OYDS
+/*     //TODO add back in for OYDS
     // tilt coral joystick
     new Trigger(() -> Math.abs(secondXboxController.getRightY()) > 0.05)
       .whileTrue(new RunCommand(
         () -> tiltCoral.tiltEndEffector(MathUtil.applyDeadband(-secondXboxController.getRightY(), 0.05)), 
-        tiltCoral));
+        tiltCoral)); */
  
     // algae in
     new JoystickButton(secondXboxController, Button.kRightBumper.value)
@@ -377,10 +394,10 @@ public class RobotContainer {
       .whileTrue(new RunCommand(
         () -> lift.lineUpL3(), 
         lift));
-    //L1 Elevator
+    //home Elevator
     new POVButton(secondXboxController, 90)
       .whileTrue(new RunCommand(
-        () -> lift.lineUpL1(), 
+        () -> lift.lineUpL0(), 
         lift));
     //L2 Elevator
     new POVButton(secondXboxController, 180)
@@ -398,10 +415,10 @@ public class RobotContainer {
       .whileTrue(new RunCommand(
         () -> tiltCoral.lineUpL3(), 
         tiltCoral));
-    //L1 tilt
+    //home tilt
     new POVButton(secondXboxController, 90)
       .whileTrue(new RunCommand(
-        () -> tiltCoral.lineUpL1(), 
+        () -> tiltCoral.lineUpL0(), 
         tiltCoral));
     //L2 tilt
     new POVButton(secondXboxController, 180)
@@ -443,6 +460,10 @@ public class RobotContainer {
   //Method for displaying abs encoder values for finding offset
   public void displayAbsoluteAngle(){
     m_robotDrive.displayAbsValues();
+  }
+
+  public void sendElevatorHeightToTilt() {
+    tiltCoral.updateElevatorHeight(lift.returnHeight());
   }
 
   

@@ -31,29 +31,33 @@ public class TiltSubsystem extends SubsystemBase {
   //double lowerLimit = 7;
   double lowerLimit = 0;
   //35
-  double upperLimit = 70;//95
+  double upperLimit = 105;//95
   //95
   //19.5945
 
   boolean atDesiredTilt = false;
 
   //TODO test 1-3
-  double L4Angle = 70;//90
-  double L3Angle = 70;//95
-  double L2Angle = 70;//95
-  double L1Angle = 70;
+  double L4Angle = 100;//90
+  double L3Angle = 110;//95
+  double L2Angle = 108;//95
+  double L1Angle = 100;
   double L0Angle = 0;
   //double L0Angle = -4.33;
   //double L0Angle = 5;
 
 
   //TODO fix these angles
-  double upperAlgae = 22;//36
-  double lowerAlgae = 22;//36
-  double barge = 70;//95
-  double processor = 22;//8.30954?
+  double upperAlgae = 27;//36
+  double lowerAlgae = 27.5;//36
+  double barge = 105;//95
+  double processor = 27;//8.30954?
 
   double currentTilt;
+
+  double elevatorHeight = 0;
+  double highestSafeElevatorHeight = 7;
+  double minimumPivotWhenUp = 30;
  
   /** Creates a new CoralSubsystem. */
   public TiltSubsystem() {
@@ -75,13 +79,17 @@ public class TiltSubsystem extends SubsystemBase {
 
 
   public void tiltEndEffector(double speed){
+
    //System.out.println(speed);
-   if(currentTilt <= lowerLimit && (Math.signum(speed) == -1)){ 
+  if(elevatorHeight > highestSafeElevatorHeight && (currentTilt < minimumPivotWhenUp && speed <= 0)){
+    tiltStop();
+  }
+   else if(currentTilt <= lowerLimit && (Math.signum(speed) == -1)){ 
     //System.out.println("A");
-      tiltMax.stopMotor();
+    tiltStop();
     } else if (currentTilt >= upperLimit && (Math.signum(speed) == 1)){
       //System.out.println("B");
-      tiltMax.stopMotor();
+      tiltStop();
     } else{
       //System.out.println("C");
       tiltMax.set(speed);
@@ -90,11 +98,18 @@ public class TiltSubsystem extends SubsystemBase {
   }
 
   public void tiltStop(){
-    tiltMax.stopMotor();
+    if(elevatorHeight > highestSafeElevatorHeight && currentTilt < minimumPivotWhenUp*.9) {
+      tiltMax.set(runSpeed/2);
+    } else {
+      tiltMax.stopMotor();
+    }
   }
 
   public void tiltTo(double desiredPosition){
     SmartDashboard.putNumber("desiredtilt", desiredPosition);
+    if(elevatorHeight > highestSafeElevatorHeight && desiredPosition < minimumPivotWhenUp){
+      desiredPosition = minimumPivotWhenUp;
+    }
     double position = currentTilt;
     //System.out.println("desired position" + desiredPosition);
     if(position <= (lowerLimit) && (desiredPosition <=(lowerLimit))){ 
@@ -174,5 +189,9 @@ public class TiltSubsystem extends SubsystemBase {
 
   public double returnTilt(){
     return currentTilt;
+  }
+
+  public void updateElevatorHeight(double height) {
+    elevatorHeight = height;
   }
 }

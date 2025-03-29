@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     m_robotContainer.displayAbsoluteAngle();
-
+    m_robotContainer.sendElevatorHeightToTilt();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
