@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.0,
+        "x": 7.75,
         "y": 1.914906
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.5,
+        "x": 7.25,
         "y": 1.914906
       },
       "isLocked": false,
@@ -24,7 +24,7 @@
         "y": 2.3948084831077807
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "RightReefLinedup"
     }
   ],

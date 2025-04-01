@@ -181,10 +181,15 @@ public class RobotContainer {
               true),
           m_robotDrive)); 
 
-    // Configure default commands
+/*     // Configure default commands
     climber.setDefaultCommand(
         new RunCommand(
             () -> climber.stopClimber(),
+            climber)); */
+        // Configure default commands
+    climber.setDefaultCommand(
+        new RunCommand(
+            () -> climber.defaultClimber(),
             climber));
 
      //TODO add back in for OYDS

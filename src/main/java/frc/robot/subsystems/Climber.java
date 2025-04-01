@@ -4,38 +4,21 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.hal.FRCNetComm.tInstances;
-import edu.wpi.first.hal.FRCNetComm.tResourceType;
-import edu.wpi.first.hal.HAL;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-
 import frc.robot.Configs;
 import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
 
-import java.lang.invoke.VolatileCallSite;
-import java.security.PublicKey;
-import java.util.List;
-import java.util.function.Consumer;
+
+import edu.wpi.first.wpilibj.Timer;
 
 
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.BaseTalonConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.*;
 
 
 import com.revrobotics.RelativeEncoder;
@@ -56,6 +39,7 @@ public class Climber extends SubsystemBase {
 
   private final SparkMax climberMotor;
   private final RelativeEncoder climberEncoder;
+  Timer matchTimer;
 
   double runSpeed = 1;
   //166 range
@@ -64,8 +48,11 @@ public class Climber extends SubsystemBase {
   double lowerLimit = -671;
   double upperLimit = 0;
 
+  double readyToClimbAngle = -380;
+
   /** Creates a new DriveSubsystem. */
   public Climber() {
+    matchTimer = new Timer();
     climberMotor = new SparkMax(ClimberConstants.climberCANID, MotorType.kBrushless);
     climberEncoder = climberMotor.getEncoder();
 
@@ -111,6 +98,13 @@ public class Climber extends SubsystemBase {
     climberMotor.set(speed);
   }
 
+  public void defaultClimber(){
+    if(matchTimer.getMatchTime() < 20 && matchTimer.getMatchTime() > 10){
+      setClimberPosition(readyToClimbAngle);
+    } else {
+      climberMotor.stopMotor();
+    }
+  }
 
 
 }
